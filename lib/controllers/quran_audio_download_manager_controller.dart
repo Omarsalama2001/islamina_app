@@ -1,0 +1,64 @@
+import 'package:expandable/expandable.dart';
+import 'package:get/get.dart';
+import 'package:islamina_app/data/models/download_surah_model.dart';
+import 'package:islamina_app/data/models/quran_reader.dart';
+import 'package:islamina_app/handlers/quran_audio_download_handler.dart';
+import '../../../../../data/repository/readers_repository.dart';
+
+class QuranAudioDownloadManagerController extends GetxController {
+  List<QuranReader> readers = [];
+  final ExpandableController expandableController = ExpandableController();
+
+  // Delete downloaded surah for a specific reader
+  void onDeleteSurah(
+      {required DownloadSurahModel surah, required QuranReader reader}) async {
+    QuranAudioDownloadHandler.deleteDownloadedSurah(
+        surahId: surah.id, readerIdentifier: reader.identifier);
+    surah.isDownloaded.value = false;
+  }
+
+  // Download all surahs for a specific reader
+  void onDownloadAllPressed({required QuranReader reader}) async {
+    // Retrieve surah download data if not already available
+    reader.surahs ??=
+        await ReadersRepository().getSurahDownloadData(reader: reader);
+
+    // Initialize surah download status for UI
+    for (var i = 0; i < 114; i++) {
+      reader.surahs![i].isPending.value = true;
+    }
+
+    // Start downloading all surahs
+    QuranAudioDownloadHandler.downloadAllSurah(
+      reader: reader,
+      onSurahStartDownloading: (surah) {
+        reader.surahs![surah].downloadProgress.value = 0;
+        reader.surahs![surah].isDownloading.value = true;
+        reader.surahs![surah].isPending.value = false;
+      },
+      surahProgress: (int surahId, int progress) {
+        reader.surahs![surahId - 1].downloadProgress.value = progress;
+      },
+    );
+  }
+
+  // Download a single surah for a specific reader
+  Future<void> onSurahDownloadPressed(
+      {required int readerIndex, required DownloadSurahModel surah}) async {
+    surah.isDownloading.value = true;
+    surah.isPending.value = false;
+
+    // Start downloading the single surah
+    surah.isDownloaded.value =
+        await QuranAudioDownloadHandler.downloadSingleSurah(
+      surahId: surah.id - 1,
+      reader: readers[readerIndex],
+      surahProgress: (surahId, progress) {
+        surah.downloadProgress.value = progress;
+      },
+    );
+
+    surah.isDownloading.value = false;
+    surah.downloadProgress.value = 0;
+  }
+}

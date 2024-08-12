@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "845355176830",
+    "project_id": "islamina-d1c6a",
+    "storage_bucket": "islamina-d1c6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845355176830:android:4767b13b45ffbc51f3592f",
+        "android_client_info": {
+          "package_name": "com.islamina.islamina_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2r1QxdlDSO9FH8mKKupwMkOz2bE9yMdw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
