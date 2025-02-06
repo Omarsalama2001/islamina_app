@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:islamina_app/utils/extension.dart';
+import 'package:quran/quran.dart' as quran;
 
 class KhatmaController extends GetxController {
   List khatmas = [''];
@@ -64,22 +64,34 @@ class KhatmaController extends GetxController {
     int days = int.tryParse(daysController.text) ?? 1;
     if (days <= 604 && days >= 1) {
       // expectedPeriodOfKhatma = (604 / days).floor().toInt();
-      int pages = 604 - ((selectedJuzIndex + 1) * 20);
-      expectedPeriodOfKhatma = pages ~/ days;
-      // expectedPeriodOfKhatma =
-      //     ((604 - ((selectedJuzIndex + 1) * 20)) / days).ceil().toInt();
-      // expectedPeriodOfKhatma = (604 / days);
+      int pages = 604 - ((selectedJuzIndex) * 20);
+      expectedPeriodOfKhatma = (pages / days).ceil();
+      
       handleTextExpectedPeriodOfKhatma = '$expectedPeriodOfKhatma صفحة';
     } else {
-      Fluttertoast.showToast(msg: 'الرجاء إدخال عدد مناسب');
+      // Fluttertoast.showToast(msg: 'الرجاء إدخال عدد مناسب');
     }
     update();
   }
 
   void calculateKhatmaByReadingOfDay() {
-    // int pages = 604 - ((selectedJuzIndex + 1) * 20);
-    expectedPeriodOfKhatma = (valueOfUnit ~/ (selectedDestiny + 1));
+    expectedPeriodOfKhatma = ((calculateDifferenceInDays(valueOfUnit)) / (selectedDestiny + 1)).ceil();
     update();
+  }
+
+  calculateDifferenceInDays(valueofUnit) {
+    final surahAndVerses = quran.getSurahAndVersesFromJuz(selectedJuzIndex + 1);
+    final currentPage = quran.getPageNumber(surahAndVerses.keys.first, surahAndVerses.values.first.first);
+    if (valueofUnit == 30) {
+      return (valueofUnit - selectedJuzIndex * 1);
+    } else if (valueofUnit == 60) {
+      return (valueofUnit - selectedJuzIndex * 2);
+    } else if (valueofUnit == 240) {
+      return (valueofUnit - selectedJuzIndex * 8);
+    } else if (valueofUnit == 114) {
+      return (valueofUnit - surahAndVerses.keys.first);
+    }
+    return (valueofUnit - (currentPage-1));
   }
 
   int get valueOfUnit {

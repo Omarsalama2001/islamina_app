@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/pages/azkar_settings_page.dart';
 import '../../widgets/linear_progress_indicator.dart';
 import '../../widgets/zkr_widget.dart';
@@ -16,7 +17,7 @@ class AzkarDetailsPage extends GetView<AzkarDetailsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(appBarTitle),
+        title: Text(context.translate(context.translate( appBarTitle))),
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
         actions: [
           IconButton(

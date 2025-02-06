@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:quran/quran.dart';
 import 'package:islamina_app/data/cache/quran_reader_cache.dart';
@@ -24,13 +27,13 @@ Future<void> selectReaderSheet() async {
           ReadersRepository().getQuranReaders(),
         ]),
         builder: (context, snapshot) {
+          final locale = BlocProvider.of<ThemeCubit>(context).locale;
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CustomCircularProgressIndicator();
           } else {
             var readersList = snapshot.data![0];
             var selectedReader = QuranReaderCache.getSelectedReaderFromCache();
-            var selectedIndex = readersList.indexWhere(
-                (element) => element.identifier == selectedReader.identifier);
+            var selectedIndex = readersList.indexWhere((element) => element.identifier == selectedReader.identifier);
             int? selectedReaderIndex;
 
             return Column(
@@ -38,8 +41,7 @@ Future<void> selectReaderSheet() async {
               children: [
                 Expanded(
                   child: CupertinoPicker.builder(
-                    scrollController:
-                        FixedExtentScrollController(initialItem: selectedIndex),
+                    scrollController: FixedExtentScrollController(initialItem: selectedIndex),
                     childCount: readersList.length,
                     itemExtent: 50,
                     onSelectedItemChanged: (value) {
@@ -48,7 +50,7 @@ Future<void> selectReaderSheet() async {
                     itemBuilder: (context, index) {
                       return Center(
                         child: Text(
-                          '${index + 1} - ${readersList[index].name}',
+                          '${index + 1} - ${locale.languageCode == 'ar' ? readersList[index].name : readersList[index].englishName}',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       );
@@ -60,8 +62,7 @@ Future<void> selectReaderSheet() async {
                   child: FilledButton(
                     onPressed: () async {
                       if (selectedReaderIndex != null) {
-                        QuranReaderCache.saveSelectedReaderToCache(
-                            readersList[selectedReaderIndex!]);
+                        QuranReaderCache.saveSelectedReaderToCache(readersList[selectedReaderIndex!]);
                         Get.back();
                       }
                     },
@@ -88,12 +89,12 @@ void showGoToPageSheet({required currentPage}) {
     builder: (context) => DefaultGoToSheet(
       initValue: currentPage, // Initial value for the picker
       childCount: 604, // Total number of pages in the Quran
-      title: 'إختر الصفحة', // Title of the bottom sheet
+      title: Get.context!.translate('selectPage'), // Title of the bottom sheet
       itemBuilder: (context, index) {
         return Center(
           child: Text(
             // 'الصفحة  ${ArabicNumbers().convert(index + 1)}',
-            'الصفحة  ${index + 1}',
+            '${Get.context!.translate('thepage')}  ${index + 1}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         );
@@ -103,8 +104,7 @@ void showGoToPageSheet({required currentPage}) {
         QuranReadingController controller = Get.find();
 
         // Start loading the page and then scroll to the page
-        controller.fetchQuranPageData(
-            pageNumber: selectedValue, scrollToPage: true);
+        controller.fetchQuranPageData(pageNumber: selectedValue, scrollToPage: true);
 
         // Close the bottom sheet
         Get.back();
@@ -118,18 +118,19 @@ void showGoToPageSheet({required currentPage}) {
 /// Parameters:
 /// - currentSurah: The current surah number to be set as the initial value in the picker.
 void showGoToSurahSheet({required currentSurah}) {
+  final locale = BlocProvider.of<ThemeCubit>(Get.context!).locale;
   showMaterialModalBottomSheet(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
     context: Get.context!, // Get the current context
     builder: (context) => DefaultGoToSheet(
       initValue: currentSurah, // Initial value for the picker
       childCount: 114, // Total number of surahs in the Quran
-      title: 'إختر السورة', // Title of the bottom sheet
+      title: Get.context!.translate('selectSurah'), // Title of the bottom sheet
       itemBuilder: (context, index) {
         return Center(
           child: Text(
             // '${ArabicNumbers().convert(index + 1)} - ${(index + 1).getSurahNameArabicSimple}',
-            '${index + 1} - ${(index + 1).getSurahNameArabicSimple}',
+            locale.languageCode == 'ar' ? '${index + 1} - ${(index + 1).getSurahNameArabicSimple}' : '${index + 1} - ${(index + 1).getSurahNameEnglish}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         );
@@ -139,8 +140,7 @@ void showGoToSurahSheet({required currentSurah}) {
         QuranReadingController controller = Get.find();
 
         // Start loading the page and then scroll to the page
-        controller.fetchQuranPageData(
-            pageNumber: getSurahPages(selectedValue)[0], scrollToPage: true);
+        controller.fetchQuranPageData(pageNumber: getSurahPages(selectedValue)[0], scrollToPage: true);
 
         // Close the bottom sheet
         Get.back();
@@ -160,12 +160,12 @@ void showGoToJuzSheet({required currentJuz}) {
     builder: (context) => DefaultGoToSheet(
       initValue: currentJuz, // Initial value for the picker
       childCount: 30, // Total number of juz in the Quran
-      title: 'إختر الجزء', // Title of the bottom sheet
+      title: Get.context!.translate('moveTojuz'), // Title of the bottom sheet
       itemBuilder: (context, index) {
         return Center(
           child: Text(
             // 'الجزء  ${ArabicNumbers().convert(index + 1)}',
-            'الجزء  ${index + 1}',
+            '${Get.context!.translate('theJuz')}  ${index + 1}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         );
@@ -178,12 +178,10 @@ void showGoToJuzSheet({required currentJuz}) {
         final surahAndVerses = getSurahAndVersesFromJuz(selectedValue);
 
         // Get the page number and navigate to it
-        final pageNumber = getPageNumber(
-            surahAndVerses.keys.first, surahAndVerses.values.first.first);
+        final pageNumber = getPageNumber(surahAndVerses.keys.first, surahAndVerses.values.first.first);
 
         // Start loading the page and then scroll to the page
-        controller.fetchQuranPageData(
-            pageNumber: pageNumber, scrollToPage: true);
+        controller.fetchQuranPageData(pageNumber: pageNumber, scrollToPage: true);
 
         // Close the bottom sheet
         Get.back();
@@ -252,8 +250,7 @@ void showVerseInfoBottomSheet({
     word = verse.words[verse.words.indexOf(word) - 1];
   }
   var controller = Get.put(AyahBottomSheetController());
-  controller.bookmark =
-      Bookmark(surah: verse.surahNumber, verse: verse.verseNumber);
+  controller.bookmark = Bookmark(surah: verse.surahNumber, verse: verse.verseNumber);
   // if (context.mounted) {
   // await showMaterialModalBottomSheet(
   //   duration: const Duration(milliseconds: 250),

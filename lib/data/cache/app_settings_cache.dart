@@ -9,8 +9,7 @@ import 'package:islamina_app/constants/cache_keys.dart';
 import '../../services/shared_preferences_service.dart';
 
 class AppSettingsCache {
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
 
   static void setThemeMode({required ThemeMode themeMode}) {
     Get.changeThemeMode(themeMode);
@@ -54,16 +53,15 @@ class AppSettingsCache {
     return language;
   }
 
+  /// This is used to keep track of the selected audio in the app.
+  /// The index is saved under the key [selectedAudioKey].
+  /// The value is then retrieved with [getSelectedAudioIndex].
   static void setSelectedAudioIndex(int index) {
-    GetStorage storage = GetStorage();
-    storage.write(selectedAudioKey, index);
+    prefs.setInt(selectedAudioKey, index);
   }
 
   static int getSelectedAudioIndex() {
-    GetStorage storage = GetStorage();
-    return storage.read<int>(selectedAudioKey) ?? 0;
-    // int index = prefs.getInt(selectedAudioKey) ?? 0;
-    // print('index:$index');
-    // return index;
+    return prefs.getInt(selectedAudioKey) ?? 0;
   }
 }
+   

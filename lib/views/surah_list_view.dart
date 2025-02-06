@@ -44,6 +44,7 @@ class SurahListView extends GetView {
         Get.toNamed(
           Routes.QURAN_READING_PAGE,
           arguments: QuranNavigationArgumentModel(
+            isKhatma: false,
             surahNumber: surahNumber,
             pageNumber: quran.getPageNumber(surahNumber, 1),
             verseNumber: 1,

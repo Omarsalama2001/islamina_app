@@ -54,6 +54,7 @@ class AyahBottomSheetController extends GetxController {
       // update the observable boolean
       isBookmarked.value = true;
     }
+    update();
   }
 
   /// Plays the audio for a specific word in the Quran.
@@ -103,8 +104,7 @@ class AyahBottomSheet extends GetView<AyahBottomSheetController> {
   @override
   Widget build(BuildContext context) {
     // Build the text for sharing
-    final shareText =
-        '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)}';
+    final shareText = '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)}';
     return Material(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -117,10 +117,8 @@ class AyahBottomSheet extends GetView<AyahBottomSheetController> {
                 padding: const EdgeInsetsDirectional.only(start: 10),
                 child: Row(
                   children: [
-                    SurahVerseWidget(
-                        surah: verse.surahNumber, verse: verse.verseNumber),
-                    Text(
-                        ' -  الآية ${verse.verseNumber} -  ${word.textUthmani}'),
+                    SurahVerseWidget(surah: verse.surahNumber, verse: verse.verseNumber),
+                    Text(' -  الآية ${verse.verseNumber} -  ${word.textUthmani}'),
                   ],
                 ),
               ),
@@ -173,11 +171,7 @@ class AyahBottomSheet extends GetView<AyahBottomSheetController> {
               // Play the audio from the current verse
               QuranAudioPlayerBottomBarController controller = Get.find();
               controller.onMainPlayPressed(
-                playRangeModel: QuranPlayRangeModel(
-                    startSurah: verse.surahNumber,
-                    endsSurah: verse.surahNumber,
-                    startVerse: verse.verseNumber,
-                    endsVerse: getVerseCount(verse.surahNumber)),
+                playRangeModel: QuranPlayRangeModel(startSurah: verse.surahNumber, endsSurah: verse.surahNumber, startVerse: verse.verseNumber, endsVerse: getVerseCount(verse.surahNumber)),
               );
               Get.back();
             },
@@ -203,10 +197,7 @@ class AyahBottomSheet extends GetView<AyahBottomSheetController> {
               // Navigate to TafsirDetailsPage
               Get.to(
                 () => const TafsirDetailsPage(),
-                arguments: {
-                  'surahNumber': verse.surahNumber,
-                  'verseNumber': verse.verseNumber
-                },
+                arguments: {'surahNumber': verse.surahNumber, 'verseNumber': verse.verseNumber},
                 binding: TafsirDetailsBinding(),
                 fullscreenDialog: true,
               );
@@ -219,12 +210,8 @@ class AyahBottomSheet extends GetView<AyahBottomSheetController> {
           Obx(() {
             return ListTile(
               dense: true,
-              title: controller.isBookmarked.value
-                  ? const Text('إزالة الإشارة المرجعية')
-                  : const Text('أضف إشارة مرجعية'),
-              leading: controller.isBookmarked.value
-                  ? const Icon(FluentIcons.bookmark_off_20_regular)
-                  : const Icon(FluentIcons.bookmark_add_20_regular),
+              title: controller.isBookmarked.value ? const Text('إزالة الإشارة المرجعية') : const Text('أضف إشارة مرجعية'),
+              leading: controller.isBookmarked.value ? const Icon(FluentIcons.bookmark_off_20_regular) : const Icon(FluentIcons.bookmark_add_20_regular),
               onTap: controller.onBookmarkPressed,
             );
           }),

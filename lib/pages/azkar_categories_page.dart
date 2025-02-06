@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/data/models/azkar_category_mode.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:islamina_app/constants/enum.dart';
@@ -17,7 +18,7 @@ class AzkarCategoriesPage extends GetView<AzkarCategoriesController> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('أذكار المسلم'),
+        title:  Text(context.translate('azkarCategories')),
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
       ),
       body: GetBuilder<AzkarCategoriesController>(builder: (context) {
@@ -61,7 +62,7 @@ class AzkarCategoriesPage extends GetView<AzkarCategoriesController> {
                             const Gap(10),
                             FittedBox(
                               child: Text(
-                                category.title,
+                               context.translate(category.title),
                                 style: context.textTheme.bodyLarge,
                               ),
                             ),

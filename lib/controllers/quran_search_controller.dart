@@ -19,6 +19,7 @@ class QuranSearchController extends GetxController {
 
   void onVersePressed(QuranVerseModel verse) {
     var navigationDetails = QuranNavigationArgumentModel(
+        isKhatma: false,
         surahNumber: verse.surahNumber,
         pageNumber: verse.pageNumber,
         verseNumber: verse.verseNumber,

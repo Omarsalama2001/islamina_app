@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:islamina_app/utils/extension.dart';
+import 'package:path/path.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:islamina_app/widgets/custom_container.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SurahItem extends StatelessWidget {
   final int surahNumber;
@@ -38,25 +44,40 @@ class SurahItem extends StatelessWidget {
   }
 
   Widget _buildSurahNumber(BuildContext context) {
-    return FittedBox(
-      alignment: Alignment.centerRight,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildSurahNumberDecoration(context),
-          const SizedBox(width: 10),
-          Text(
-            surahNumber.getSurahNameOnlyArabicSimple,
-            // surahNumber.toString().padLeft(3, '0'),
-            // surahName,
-            maxLines: 1,
-            style: const TextStyle(
-              // fontFamily: 'SURAHNAMES',
-              fontSize: 20,
+    return Expanded(
+      child: FittedBox(
+        alignment: BlocProvider.of<ThemeCubit>(context).locale == Locale('ar') ? Alignment.centerRight : Alignment.centerLeft,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSurahNumberDecoration(context),
+             
+            Text(
+              surahNumber.getSurahNameArabicSimple,
+              // surahNumber.toString().padLeft(3, '0'),
+              // surahName,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                // fontFamily: 'SURAHNAMES',
+                fontSize: 17,
+              ),
+              textScaler: TextScaler.noScaling,
             ),
-            textScaler: TextScaler.noScaling,
-          ),
-        ],
+            Text(
+              "( ${surahNumber.getSurahNameEnglish})",
+              // surahNumber.toString().padLeft(3, '0'),
+              // surahName,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                // fontFamily: 'SURAHNAMES',
+                fontSize: 17,
+              ),
+              textScaler: TextScaler.noScaling,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -99,7 +120,7 @@ class SurahItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            '${_getVerseCount()} ${_getVerseCountSuffix()}',
+            '${_getVerseCount()} ${Get.context!.translate(_getVerseCountSuffix())}',
             style: const TextStyle(fontSize: 16),
           ),
           // Text(
@@ -119,8 +140,8 @@ class SurahItem extends StatelessWidget {
           const Gap(10),
           Column(
             children: [
-              const Text(
-                'الصفحة',
+              Text(
+                Get.context!.translate('thePage'),
                 style: TextStyle(fontSize: 16),
               ),
               Text(
@@ -148,6 +169,6 @@ class SurahItem extends StatelessWidget {
   }
 
   String _getVerseCountSuffix() {
-    return quran.getVerseCount(surahNumber) < 10 ? ' آيات' : ' آية';
+    return quran.getVerseCount(surahNumber) < 10 ? 'noOfAyah' : 'ayah';
   }
 }

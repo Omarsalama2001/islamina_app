@@ -34,7 +34,7 @@ const String readerKey = 'quranReader';
 // Keys for storing main app settings
 const String themeKey = 'theme';
 const String languageKey = 'language';
-const String selectedAudioKey = 'language';
+const String selectedAudioKey = 'audioIndex';
 const String prayForMohammedKey = 'prayForMohammed';
 const String repeatedKey = 'repeatedKey';
 const String reminderJomaaKey = 'reminderJomaa';

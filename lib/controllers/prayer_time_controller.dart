@@ -5,6 +5,7 @@ import 'package:islamina_app/data/cache/app_settings_cache.dart';
 import 'package:islamina_app/data/cache/prayer_time_cache.dart';
 import 'package:islamina_app/services/notification_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:sound_mode/permission_handler.dart';
 
 import '../data/repository/prayer_time_repository.dart';
 import '../handlers/notification_alarm_handler.dart';
@@ -15,7 +16,13 @@ class PrayerTimeController extends GetxController {
   var isUpdatingLocation = false.obs;
 
   // Instance of PrayerTimeRepository to access repository methods
-  final PrayerTimeRepository repository = Get.find();
+  final PrayerTimeRepository repository = Get.find<PrayerTimeRepository>();
+
+  changePrayerTime(int index, int value) {
+    repository.changeTimes![index] = value;
+    PrayerTimeCache.saveChangeValues(repository.changeTimes!);
+    update();
+  }
 
   // Method to update the user's location
   Future<void> updateLocation() async {
@@ -37,7 +44,8 @@ class PrayerTimeController extends GetxController {
       await repository.initPrayerTimes();
 
       // cancel all alarms and re schedule new alarm for next prayer
-      Get.find<NotificationAlarmHandler>().cancelAllAndNextPrayerSchedule();
+
+      Get.find<NotificationAlarmHandler>().cancelAllAndNextPrayerSchedule(0);
 
       // Set isUpdatingLocation to false to indicate location update is complete
       isUpdatingLocation.value = false;
@@ -56,26 +64,31 @@ class PrayerTimeController extends GetxController {
 
   List<Map<String, dynamic>> athanAudios = [
     {
+      'notification_sound': 'sound',
       'src': 'assets/audio/hindi.mp3',
       'name': 'تطبيق اسلامنا',
       'isStart': false,
     },
     {
+      'notification_sound': 'meccafajer',
       'src': 'assets/audio/meccafajer.mp3',
       'name': 'مكة المكرمة',
       'isStart': false,
     },
     {
+      'notification_sound': 'madena',
       'src': 'assets/audio/madena.mp3',
       'name': 'المدينة المنورة',
       'isStart': false,
     },
     {
+      'notification_sound': 'aqsa',
       'src': 'assets/audio/aqsa.mp3',
       'name': 'الأقصى',
       'isStart': false,
     },
     {
+      'notification_sound': 'azhar',
       'src': 'assets/audio/azhar.mp3',
       'name': 'الأزهر',
       'isStart': false,
@@ -119,30 +132,40 @@ class PrayerTimeController extends GetxController {
     update();
   }
 
-  bool isTakbertan = false;
+  bool isTakbertan = PrayerTimeCache.getAdanWithtakbeerten();
 
   Future<void> toggleShowPrayerSound(bool value) async {
-    await Get.find<NotificationAlarmHandler>()
-        .cancelAllAndNextPrayerSchedule()
-        .then((_) {
-      if (value) {
-        audioPathSelected = 'takbertan';
-      } else {
-        selectedAudioIndex = AppSettingsCache.getSelectedAudioIndex();
-        getAudioPathSelected();
-      }
-    });
+    PrayerTimeCache.saveAdanWithtakbeerten(takbeerten: value);
+    // cancel all alarms and re schedule new alarm for next prayer
+
+    await Get.find<NotificationAlarmHandler>().cancelAllAndNextPrayerSchedule(0);
     update();
+    //   if (value) {
+    //     audioPathSelected = 'takbertan';
+
+    //   } else {
+    //     selectedAudioIndex = AppSettingsCache.getSelectedAudioIndex();
+    //     getAudioPathSelected();
+    //   }
+    // });
+  }
+
+  bool secondAdhnForJommaPrayer = PrayerTimeCache.getSecondAdhanForJommaPrayer();
+  int afterOrBeforeJommaPrayer = PrayerTimeCache.getSecondAhdanTimeForJommaPrayer()['afterOrBeforeJommaPrayer'];
+  int secondAdhanTimeChange = PrayerTimeCache.getSecondAhdanTimeForJommaPrayer()['timeChange'];
+  Future<void> toggleSecondAdhnForJommaPrayer(bool value) async {
+    PrayerTimeCache.saveSecondAdhanForJommaPrayer(value);
+    update();
+  }
+  saveSecondAhdanTimeForJommaPrayer(int timeChange,int afterOrBeforeJommaPrayer) async {
+    PrayerTimeCache.setSecondAhdanTimeForJommaPrayer(timeChange,afterOrBeforeJommaPrayer);
   }
 
   bool showBeforePrayerSound = false;
   Future<void> toggleShowBeforePrayerSound(bool value) async {
     if (value) {
       await NotificationAlarmHandler.scheduleBeforePrayerAlarm(
-        alarmTime: Get.find<PrayerTimeRepository>()
-            .getNextPrayer()
-            .fulldate
-            .subtract(const Duration(minutes: 15)),
+        alarmTime: Get.find<PrayerTimeRepository>().getNextPrayer().fulldate.subtract(const Duration(minutes: 15)),
       );
       showBeforePrayerSound = true;
     } else {
@@ -150,19 +173,40 @@ class PrayerTimeController extends GetxController {
       await Get.find<NotificationService>().cancelNotifications(12);
       showBeforePrayerSound = false;
     }
-    PrayerTimeCache.saveBeforePrayerNotificationSound(
-        showNotification: showBeforePrayerSound);
+    PrayerTimeCache.saveBeforePrayerNotificationSound(showNotification: showBeforePrayerSound);
     update();
+  }
+
+  checkIfSilentDuringPrayer() async {
+    bool isSilentDuringPrayer = PrayerTimeCache.getSilentDuringPrayer();
+    bool? isGranted = await PermissionHandler.permissionsGranted;
+
+    if (isGranted! && isSilentDuringPrayer) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isSilentDuringPrayer = false;
+  Future<void> toggleSilentDuringPrayer(bool value) async {
+    if (value) {
+      bool? isGranted = await PermissionHandler.permissionsGranted;
+
+      if (!isGranted!) {
+        await PermissionHandler.openDoNotDisturbSetting();
+      } else {
+        PrayerTimeCache.saveSilentDuringPrayer(value);
+      }
+    } else {
+      PrayerTimeCache.saveSilentDuringPrayer(value);
+    }
   }
 
   bool showIqamahPrayerSound = false;
   Future<void> toggleShowIqamahPrayerSound(bool value) async {
     if (value) {
       await NotificationAlarmHandler.scheduleIqamahPrayerAlarm(
-        alarmTime: Get.find<PrayerTimeRepository>()
-            .getNextPrayer()
-            .fulldate
-            .add(const Duration(minutes: 15)),
+        alarmTime: Get.find<PrayerTimeRepository>().getNextPrayer().fulldate.add(const Duration(minutes: 15)),
       );
       showIqamahPrayerSound = true;
     } else {
@@ -170,18 +214,25 @@ class PrayerTimeController extends GetxController {
       await Get.find<NotificationService>().cancelNotifications(11);
       showIqamahPrayerSound = false;
     }
-    PrayerTimeCache.saveBeforePrayerNotificationSound(
-        showNotification: showIqamahPrayerSound);
+    PrayerTimeCache.saveBeforePrayerNotificationSound(showNotification: showIqamahPrayerSound);
     update();
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    selectedAudioIndex = AppSettingsCache.getSelectedAudioIndex();
+    try {
+      selectedAudioIndex = AppSettingsCache.getSelectedAudioIndex();
+    } catch (e) {}
     showBeforePrayerSound = PrayerTimeCache.getBeforePrayerNotificationSound();
     showIqamahPrayerSound = PrayerTimeCache.getIqamahPrayerNotificationSound();
+    isSilentDuringPrayer = await checkIfSilentDuringPrayer();
     getAudioPathSelected();
+    // prayerChangeTimes = await PrayerTimeCache.getChangeValues();
+    // print("8888888888888888888888888888888xxxxxxxxxxxxxxx");
+    // print(prayerChangeTimes);
+    // PrayerTimeCache.saveChangeValues(prayerChangeTimes);
+    update();
   }
 
   @override

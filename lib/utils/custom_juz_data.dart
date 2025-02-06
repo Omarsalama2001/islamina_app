@@ -7,7 +7,8 @@ const List<Map<String, dynamic>> customJuz = [
       2: [1, 141]
     },
     "qcf_name": "ﰸﰹ",
-    "name": "الجزء الأول"
+    "name": "الجزء الأول",
+    "english_name": "Juz 1"
   },
   {
     "id": 2,
@@ -16,7 +17,8 @@ const List<Map<String, dynamic>> customJuz = [
       2: [142, 252]
     },
     "qcf_name": "ﰸﰺ",
-    "name": "الجزء الثاني"
+    "name": "الجزء الثاني",
+    "english_name": "Juz 2"
   },
   {
     "id": 3,
@@ -26,7 +28,8 @@ const List<Map<String, dynamic>> customJuz = [
       3: [1, 92]
     },
     "qcf_name": "ﰸﰻ",
-    "name": "الجزء الثالث"
+    "name": "الجزء الثالث",
+    "english_name": "Juz 3"
   },
   {
     "id": 4,
@@ -36,7 +39,8 @@ const List<Map<String, dynamic>> customJuz = [
       4: [1, 23]
     },
     "qcf_name": "ﰸﰼ",
-    "name": "الجزء الرابع"
+    "name": "الجزء الرابع",
+    "english_name": "Juz 4"
   },
   {
     "id": 5,
@@ -45,7 +49,8 @@ const List<Map<String, dynamic>> customJuz = [
       4: [24, 147]
     },
     "qcf_name": "ﰸﰽ",
-    "name": "الجزء الخامس"
+    "name": "الجزء الخامس",
+    "english_name": "Juz 5"
   },
   {
     "id": 6,
@@ -55,7 +60,8 @@ const List<Map<String, dynamic>> customJuz = [
       5: [1, 81]
     },
     "qcf_name": "ﰸﰾ",
-    "name": "الجزء السادس"
+    "name": "الجزء السادس",
+    "english_name": "Juz 6"
   },
   {
     "id": 7,
@@ -65,7 +71,8 @@ const List<Map<String, dynamic>> customJuz = [
       6: [1, 110]
     },
     "qcf_name": "ﰸﰿ",
-    "name": "الجزء السابع"
+    "name": "الجزء السابع",
+    "english_name": "Juz 7"
   },
   {
     "id": 8,
@@ -75,7 +82,8 @@ const List<Map<String, dynamic>> customJuz = [
       7: [1, 87]
     },
     "qcf_name": "ﰸﱀ",
-    "name": "الجزء الثامن"
+    "name": "الجزء الثامن",
+    "english_name": "Juz 8"
   },
   {
     "id": 9,
@@ -85,7 +93,8 @@ const List<Map<String, dynamic>> customJuz = [
       8: [1, 40]
     },
     "qcf_name": "ﰸﱁ",
-    "name": "الجزء التاسع"
+    "name": "الجزء التاسع",
+    "english_name": "Juz 9"
   },
   {
     "id": 10,
@@ -95,7 +104,8 @@ const List<Map<String, dynamic>> customJuz = [
       9: [1, 92]
     },
     "qcf_name": "ﰸﱂ",
-    "name": "الجزء العاشر"
+    "name": "الجزء العاشر",
+    "english_name": "Juz 10"
   },
   {
     "id": 11,
@@ -106,7 +116,8 @@ const List<Map<String, dynamic>> customJuz = [
       11: [1, 5]
     },
     "qcf_name": "ﰸﱃ",
-    "name": "الجزء الحادي عشر"
+    "name": "الجزء الحادي عشر",
+    "english_name": "Juz 11"
   },
   {
     "id": 12,
@@ -116,7 +127,8 @@ const List<Map<String, dynamic>> customJuz = [
       12: [1, 52]
     },
     "qcf_name": "ﰸﱄ",
-    "name": "الجزء الثاني عشر"
+    "name": "الجزء الثاني عشر",
+    "english_name": "Juz 12"
   },
   {
     "id": 13,
@@ -127,7 +139,8 @@ const List<Map<String, dynamic>> customJuz = [
       14: [1, 52]
     },
     "qcf_name": "ﰸﱅ",
-    "name": "الجزء الثالث عشر"
+    "name": "الجزء الثالث عشر",
+    "english_name": "Juz 13"
   },
   {
     "id": 14,
@@ -137,7 +150,8 @@ const List<Map<String, dynamic>> customJuz = [
       16: [1, 128]
     },
     "qcf_name": "ﰸﱆ",
-    "name": "الجزء الرابع عشر"
+    "name": "الجزء الرابع عشر",
+    "english_name": "Juz 14"
   },
   {
     "id": 15,
@@ -147,7 +161,8 @@ const List<Map<String, dynamic>> customJuz = [
       18: [1, 74]
     },
     "qcf_name": "ﰸﱇ",
-    "name": "الجزء الخامس عشر"
+    "name": "الجزء الخامس عشر",
+    "english_name": "Juz 15"
   },
   {
     "id": 16,
@@ -158,7 +173,8 @@ const List<Map<String, dynamic>> customJuz = [
       20: [1, 135]
     },
     "qcf_name": "ﰸﱈ",
-    "name": "الجزء السادس عشر"
+    "name": "الجزء السادس عشر",
+    "english_name": "Juz 16"
   },
   {
     "id": 17,
@@ -168,7 +184,8 @@ const List<Map<String, dynamic>> customJuz = [
       22: [1, 78]
     },
     "qcf_name": "ﰸﱉ",
-    "name": "الجزء السابع عشر"
+    "name": "الجزء السابع عشر",
+    "english_name": "Juz 17"
   },
   {
     "id": 18,
@@ -179,7 +196,8 @@ const List<Map<String, dynamic>> customJuz = [
       25: [1, 20]
     },
     "qcf_name": "ﰸﱊ",
-    "name": "الجزء الثامن عشر"
+    "name": "الجزء الثامن عشر",
+    "english_name": "Juz 18"
   },
   {
     "id": 19,
@@ -190,7 +208,8 @@ const List<Map<String, dynamic>> customJuz = [
       27: [1, 55]
     },
     "qcf_name": "ﰸﱋ",
-    "name": "الجزء التاسع عشر"
+    "name": "الجزء التاسع عشر",
+    "english_name": "Juz 19"
   },
   {
     "id": 20,
@@ -201,7 +220,8 @@ const List<Map<String, dynamic>> customJuz = [
       29: [1, 45]
     },
     "qcf_name": "ﰸﱌ",
-    "name": "الجزء العشرون"
+    "name": "الجزء العشرون",
+    "english_name": "Juz 20"
   },
   {
     "id": 21,
@@ -214,7 +234,8 @@ const List<Map<String, dynamic>> customJuz = [
       33: [1, 30]
     },
     "qcf_name": "ﰸﱍ",
-    "name": "الجزء الواحد والعشرون"
+    "name": "الجزء الواحد والعشرون",
+    "english_name": "Juz 21"
   },
   {
     "id": 22,
@@ -226,7 +247,8 @@ const List<Map<String, dynamic>> customJuz = [
       36: [1, 27]
     },
     "qcf_name": "ﰸﱎ",
-    "name": "الجزء الثاني والعشرون"
+    "name": "الجزء الثاني والعشرون",
+    "english_name": "Juz 22"
   },
   {
     "id": 23,
@@ -238,7 +260,8 @@ const List<Map<String, dynamic>> customJuz = [
       39: [1, 31]
     },
     "qcf_name": "ﰸﱏ",
-    "name": "الجزء الثالث والعشرون"
+    "name": "الجزء الثالث والعشرون",
+    "english_name": "Juz 23"
   },
   {
     "id": 24,
@@ -249,7 +272,8 @@ const List<Map<String, dynamic>> customJuz = [
       41: [1, 46]
     },
     "qcf_name": "ﰸﱐ",
-    "name": "الجزء الرابع والعشرون"
+    "name": "الجزء الرابع والعشرون",
+    "english_name": "Juz 24"
   },
   {
     "id": 25,
@@ -262,53 +286,53 @@ const List<Map<String, dynamic>> customJuz = [
       45: [1, 37]
     },
     "qcf_name": "ﰸﱑ",
-    "name": "الجزء الخامس والعشرون"
+    "name": "الجزء الخامس والعشرون",
+    "english_name": "Juz 25"
   },
   {
     "id": 26,
-    "surahs": [46, 47, 48, 49, 50, 51],
+    "surahs": [46, 47, 48, 49, 50],
     "verses": {
       46: [1, 35],
       47: [1, 38],
       48: [1, 29],
       49: [1, 18],
-      50: [1, 45],
-      51: [1, 30]
+      50: [1, 45]
     },
     "qcf_name": "ﰸﱒ",
-    "name": "الجزء السادس والعشرون"
+    "name": "الجزء السادس والعشرون",
+    "english_name": "Juz 26"
   },
   {
     "id": 27,
-    "surahs": [51, 52, 53, 54, 55, 56, 57],
+    "surahs": [51, 52, 53, 54, 55, 56],
     "verses": {
-      51: [31, 60],
+      51: [1, 60],
       52: [1, 49],
       53: [1, 62],
       54: [1, 55],
       55: [1, 78],
-      56: [1, 96],
-      57: [1, 29]
+      56: [1, 96]
     },
     "qcf_name": "ﰸﱓ",
-    "name": "الجزء السابع والعشرون"
+    "name": "الجزء السابع والعشرون",
+    "english_name": "Juz 27"
   },
   {
     "id": 28,
-    "surahs": [58, 59, 60, 61, 62, 63, 64, 65, 66],
+    "surahs": [57, 58, 59, 60, 61, 62, 63],
     "verses": {
+      57: [1, 29],
       58: [1, 22],
       59: [1, 24],
       60: [1, 13],
       61: [1, 14],
       62: [1, 11],
-      63: [1, 11],
-      64: [1, 18],
-      65: [1, 12],
-      66: [1, 12]
+      63: [1, 11]
     },
     "qcf_name": "ﰸﱔ",
-    "name": "الجزء الثامن والعشرون"
+    "name": "الجزء الثامن والعشرون",
+    "english_name": "Juz 28"
   },
   {
     "id": 29,
@@ -327,49 +351,12 @@ const List<Map<String, dynamic>> customJuz = [
       77: [1, 50]
     },
     "qcf_name": "ﰸﱕ",
-    "name": "الجزء التاسع والعشرون"
+    "name": "الجزء التاسع والعشرون",
+    "english_name": "Juz 29"
   },
   {
     "id": 30,
-    "surahs": [
-      78,
-      79,
-      80,
-      81,
-      82,
-      83,
-      84,
-      85,
-      86,
-      87,
-      88,
-      89,
-      90,
-      91,
-      92,
-      93,
-      94,
-      95,
-      96,
-      97,
-      98,
-      99,
-      100,
-      101,
-      102,
-      103,
-      104,
-      105,
-      106,
-      107,
-      108,
-      109,
-      110,
-      111,
-      112,
-      113,
-      114
-    ],
+    "surahs": [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114],
     "verses": {
       78: [1, 40],
       79: [1, 46],
@@ -410,6 +397,7 @@ const List<Map<String, dynamic>> customJuz = [
       114: [1, 6]
     },
     "qcf_name": "ﰸﱖ",
-    "name": "الجزء الثلاثون"
+    "name": "الجزء الثلاثون",
+    "english_name": "Juz 30"
   }
 ];

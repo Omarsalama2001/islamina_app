@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:search_highlight_text/search_highlight_text.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../controllers/quran_search_controller.dart';
@@ -12,8 +13,8 @@ class QuranSearchView extends GetView<QuranSearchController> {
     return Scaffold(
       appBar: AppBar(
         titleTextStyle: Theme.of(context).textTheme.titleMedium,
-        title: const Text(
-          'بحث في القرآن',
+        title:  Text(
+          context.translate('quranSearch'),
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: false,
@@ -25,7 +26,7 @@ class QuranSearchView extends GetView<QuranSearchController> {
             // CustomSearchBar for user input
             CustomSearchBar(
               onChanged: controller.onSearchTextChanged,
-              hintText: 'ابحث عن آية ...',
+              hintText: 'searchForAyah',
             ),
             const SizedBox(height: 10),
             // Obx for reacting to changes in the search results

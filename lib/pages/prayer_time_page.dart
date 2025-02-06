@@ -1,11 +1,17 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:islamina_app/data/repository/prayer_time_repository.dart';
 import 'package:islamina_app/handlers/notification_alarm_handler.dart';
 import 'package:islamina_app/pages/prayer_settings_page.dart';
 import 'package:islamina_app/utils/utils.dart';
+import 'package:numberpicker/numberpicker.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../controllers/prayer_time_controller.dart';
 import '../widgets/current_prayer_details_widget.dart';
@@ -22,7 +28,7 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
     // Build the UI
     return Scaffold(
       appBar: AppBar(
-        title: const Text('أوقات الصلاة'),
+        title: Text(context.translate('prayerTimes')),
         titleTextStyle: theme.primaryTextTheme.titleMedium,
         actions: [
           IconButton(
@@ -60,8 +66,7 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
             // If coordinates are null, ask the user to grant location permission
             : Center(
                 child: MessageWithButtonWidget(
-                  title:
-                      'الرجاء السماح بصلاحيات الموقع مرة واحدة على الاقل للحصول على بيانات اوقات الصلاة',
+                  title: 'الرجاء السماح بصلاحيات الموقع مرة واحدة على الاقل للحصول على بيانات اوقات الصلاة',
                   buttonText: 'إعطاء صلاحية',
                   onTap: () async {
                     await controller.repository.getCoordinatesFromLocation();
@@ -90,22 +95,27 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
             const Icon(
               Icons.location_on,
             ),
-            const Gap(5),
-            FutureBuilder(
-              future: controller.repository.getLocationTextDecoded(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(
-                    snapshot.data!,
-                    textDirection: TextDirection.ltr,
-                  );
-                } else {
-                  return Text(
-                    controller.repository.getLocationTextCoded(),
-                    textDirection: TextDirection.ltr,
-                  );
-                }
-              },
+            Expanded(
+              child: FutureBuilder(
+                future: controller.repository.getLocationTextDecoded(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      snapshot.data!,
+                      textDirection: TextDirection.ltr,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    );
+                  } else {
+                    return Text(
+                      controller.repository.getLocationTextCoded(),
+                      textDirection: TextDirection.ltr,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    );
+                  }
+                },
+              ),
             )
           ],
         ),
@@ -118,9 +128,9 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
     final theme = Theme.of(Get.context!);
     var prayerTime = controller.repository.getPrayers();
 
-    List prayerTimes = controller.repository.getPrayerTimesByDate(
-      DateTime.now(),
-    );
+    // List prayerTimes = controller.repository.getPrayerTimesByDate(
+    //   DateTime.now(),
+    // );
 
     return CustomContainer(
       child: Column(
@@ -156,105 +166,129 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
               final textStyle = theme.textTheme.titleMedium;
 
               return ColoredBox(
-                color: Get.find<PrayerTimeRepository>().getNextPrayer().name ==
-                        prayer.name
-                    ? theme.primaryColor.withOpacity(0.3)
-                    : Colors.transparent,
+                color: Get.find<PrayerTimeRepository>().getNextPrayer().name == prayer.name ? theme.primaryColor.withOpacity(0.3) : Colors.transparent,
                 child: ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: index == prayerTime.length - 1
-                          ? const Radius.circular(9.0)
-                          : Radius.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        bottom: index == prayerTime.length - 1 ? const Radius.circular(9.0) : Radius.zero,
+                      ),
                     ),
-                  ),
-                  dense: false,
-                  leading: switch (index) {
-                    0 => Image.asset(
-                        'assets/images/fajr.png',
-                        width: 25,
-                        color:
-                            context.textTheme.titleSmall?.color ?? Colors.black,
-                      ),
-                    1 => Image.asset(
-                        'assets/images/fajr.png',
-                        width: 25,
-                        color:
-                            context.textTheme.titleSmall?.color ?? Colors.black,
-                      ),
-                    2 => Image.asset(
-                        'assets/images/dhuhr.png',
-                        width: 25,
-                        color: Colors.orange,
-                      ),
-                    3 => Image.asset(
-                        'assets/images/asr.png',
-                        width: 25,
-                        color: Colors.orange,
-                      ),
-                    4 => Image.asset(
-                        'assets/images/maghrib.png',
-                        width: 25,
-                        color:
-                            context.textTheme.titleSmall?.color ?? Colors.black,
-                      ),
-                    5 => Image.asset(
-                        'assets/images/isha.png',
-                        width: 25,
-                        color:
-                            context.textTheme.titleSmall?.color ?? Colors.black,
-                      ),
-                    int() => Image.asset(
-                        'assets/images/asr.png',
-                        width: 25,
-                        color:
-                            context.textTheme.titleSmall?.color ?? Colors.black,
-                      ),
-                  },
-                  title: Text(
-                    prayer.name,
-                    style: textStyle,
-                  ),
-                  trailing: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        prayerTimes[index],
-                        style: textStyle,
-                        textAlign: TextAlign.start,
-                      ),
-                      // Text(
-                      //   ArabicNumbers().convert(prayer.time),
-                      //   style: textStyle,
-                      //   textAlign: TextAlign.start,
-                      // ),
-                      // const Gap(15),
-                      // Text(
-                      //   prayer.amPmAr,
-                      //   textAlign: TextAlign.start,
-                      //   style: textStyle,
-                      //   textDirection: TextDirection.ltr,
-                      // ),
-                      const Gap(15),
-                      Icon(
-                        prayer.isNotificationEnabled.value
-                            ? Icons.notifications_active_outlined
-                            : Icons.notifications_off_outlined,
-                        color: prayer.isNotificationEnabled.value
-                            ? theme.primaryColor
-                            : theme.hintColor,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
+                    dense: false,
+                    leading: switch (index) {
+                      0 => Image.asset(
+                          'assets/images/fajr.png',
+                          width: 25,
+                          color: context.textTheme.titleSmall?.color ?? Colors.black,
+                        ),
+                      1 => Image.asset(
+                          'assets/images/fajr.png',
+                          width: 25,
+                          color: context.textTheme.titleSmall?.color ?? Colors.black,
+                        ),
+                      2 => Image.asset(
+                          'assets/images/dhuhr.png',
+                          width: 25,
+                          color: Colors.orange,
+                        ),
+                      3 => Image.asset(
+                          'assets/images/asr.png',
+                          width: 25,
+                          color: Colors.orange,
+                        ),
+                      4 => Image.asset(
+                          'assets/images/maghrib.png',
+                          width: 25,
+                          color: context.textTheme.titleSmall?.color ?? Colors.black,
+                        ),
+                      5 => Image.asset(
+                          'assets/images/isha.png',
+                          width: 25,
+                          color: context.textTheme.titleSmall?.color ?? Colors.black,
+                        ),
+                      int() => Image.asset(
+                          'assets/images/asr.png',
+                          width: 25,
+                          color: context.textTheme.titleSmall?.color ?? Colors.black,
+                        ),
+                    },
+                    title: Text(
+                      BlocProvider.of<ThemeCubit>(context).locale.languageCode == 'ar' ? prayer.name : prayer.englishName,
+                      style: textStyle,
+                    ),
+                    trailing: buildTileTrailing(index, prayer)),
               );
             },
           )
         ],
       ),
+    );
+  }
+
+  buildTileTrailing(int index, prayer) {
+    final theme = Theme.of(Get.context!);
+    final textStyle = theme.textTheme.titleMedium;
+    var prayerTime = controller.repository.getPrayers();
+
+    List prayerTimes = controller.repository.getPrayerTimesByDate(
+      DateTime.now(),
+    );
+    // print("Initial Value: ${controller.prayerChangeTimes[index]}");
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 10.w,
+          child: NumberPicker(
+           decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Colors.grey.shade700,
+                                            ),
+                                          ),
+                                          selectedTextStyle: GoogleFonts.aBeeZee(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Get. theme.primaryColor),
+            minValue: -30,
+            maxValue: 30,
+            value: controller.repository.changeTimes![index],
+            itemCount: 1,
+            step: 1,
+            onChanged: (value) {
+              controller.changePrayerTime(index, value);
+              prayerTimes = controller.repository.getPrayerTimesByDate(
+                DateTime.now(),
+              );
+              controller.repository.initPrayerTimes();
+              Get.find<NotificationAlarmHandler>().cancelAllAndNextPrayerSchedule(0);
+              // controller.update();
+            },
+          ),
+        ),
+        const Gap(25),
+        Text(
+          prayerTimes[index],
+          style: textStyle,
+          textAlign: TextAlign.start,
+        ),
+        // Text(
+        //   ArabicNumbers().convert(prayer.time),
+        //   style: textStyle,
+        //   textAlign: TextAlign.start,
+        // ),
+        // const Gap(15),
+        // Text(
+        //   prayer.amPmAr,
+        //   textAlign: TextAlign.start,
+        //   style: textStyle,
+        //   textDirection: TextDirection.ltr,
+        // ),
+        const Gap(15),
+        Icon(
+          prayer.isNotificationEnabled.value ? Icons.notifications_active_outlined : Icons.notifications_off_outlined,
+          color: prayer.isNotificationEnabled.value ? theme.primaryColor : theme.hintColor,
+          size: 20,
+        ),
+      ],
     );
   }
 }

@@ -14,9 +14,9 @@ class QuranMainDashboradController extends GetxController
   RxString juzSearchText = "".obs;
   RxString hizbSearchText = "".obs;
   List<String> hintTexts = [
-    'ابحث عن سورة',
-    'ابحث عن جزء',
-    'ابحث عن حزب',
+    'searchForSurah',
+    'searchForJuz',
+    'searchForHizb',
   ];
   void updatehintText(int index) {
     hintTextSearchBar.value = hintTexts[index];
@@ -30,6 +30,7 @@ class QuranMainDashboradController extends GetxController
     Get.toNamed(
       Routes.QURAN_READING_PAGE,
       arguments: QuranNavigationArgumentModel(
+        isKhatma: false,
         surahNumber: 0,
         pageNumber: QuranSettingsCache.getLastPage(),
         verseNumber: 0,

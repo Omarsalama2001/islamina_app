@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class PrayerTimeModel {
   final String name;
+  final String englishName;
   final String time;
   final Prayer type;
   final bool isAm;
@@ -11,6 +12,7 @@ class PrayerTimeModel {
   final Duration? timeLeft;
   final RxBool isNotificationEnabled;
   PrayerTimeModel({
+    required this.englishName,
     required this.name,
     required this.time,
     required this.type,
@@ -22,6 +24,7 @@ class PrayerTimeModel {
   });
 
   PrayerTimeModel copyWith({
+    String? englishName,
     String? name,
     String? time,
     Prayer? type,
@@ -32,6 +35,7 @@ class PrayerTimeModel {
     RxBool? isNotificationEnabled,
   }) {
     return PrayerTimeModel(
+      englishName:  englishName??this.englishName,
       name: name ?? this.name,
       time: time ?? this.time,
       type: type ?? this.type,

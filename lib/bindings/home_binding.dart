@@ -12,9 +12,7 @@ import '../handlers/notification_alarm_handler.dart';
 class HomeBinding extends Bindings {
   @override
   void dependencies() async {
-    Get.lazyPut<HomeController>(
-      () => HomeController(),
-    );
+    Get.put(HomeController());
     Get.put(NotificationService());
     Get.put(PrayerTimeRepository());
     Get.put(NotificationAlarmHandler());

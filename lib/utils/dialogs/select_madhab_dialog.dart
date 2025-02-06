@@ -1,6 +1,7 @@
 import 'package:adhan/adhan.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/data/cache/prayer_time_cache.dart';
 import 'package:islamina_app/data/repository/prayer_time_repository.dart';
 
@@ -20,7 +21,7 @@ class MadhabSelectionDialogState extends State<MadhabSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('طريقة حساب العصر'),
+      title: Text(context.translate('calculateAsrTime')),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -44,7 +45,7 @@ class MadhabSelectionDialogState extends State<MadhabSelectionDialog> {
           onPressed: () {
             Get.back(); // Close the dialog
           },
-          child: const Text('إلغاء'),
+          child: Text(context.translate('cancel')),
         ),
         TextButton(
           onPressed: () async {
@@ -52,13 +53,12 @@ class MadhabSelectionDialogState extends State<MadhabSelectionDialog> {
               PrayerTimeCache.saveMadhabToCache(selectedMadhab!);
               await repository.initPrayerTimes();
               // cancel all alarms and re schedule new alarm for next prayer
-              Get.find<NotificationAlarmHandler>()
-                  .cancelAllAndNextPrayerSchedule();
+              Get.find<NotificationAlarmHandler>().cancelAllAndNextPrayerSchedule(0);
               Get.forceAppUpdate();
               Get.back();
             }
           },
-          child: const Text('تأكيد'),
+          child: Text(context.translate('confirmation')),
         ),
       ],
     );

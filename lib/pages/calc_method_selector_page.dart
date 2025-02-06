@@ -2,6 +2,7 @@ import 'package:adhan/adhan.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/data/repository/prayer_time_repository.dart';
 import 'package:islamina_app/handlers/notification_alarm_handler.dart';
 
@@ -44,11 +45,11 @@ class CalculationMethodSelectorPage extends GetView {
                   )
                 : const SizedBox(),
             title: Text(
-              calculationMethodList[index]['title']!,
+            context.translate(  calculationMethodList[index]['title']!),
               style: titleTextStyle,
             ),
             subtitle: Text(
-              calculationMethodList[index]['description']!,
+              context.translate(  calculationMethodList[index]['description']!),
               style: subtitleTextStyle,
             ),
             onTap: () async {
@@ -58,7 +59,7 @@ class CalculationMethodSelectorPage extends GetView {
               await repository.initPrayerTimes();
               // cancel all alarms and re schedule new alarm for next prayer
               Get.find<NotificationAlarmHandler>()
-                  .cancelAllAndNextPrayerSchedule();
+                  .cancelAllAndNextPrayerSchedule(0);
               // Rebuild the widget to reflect the selection
               Get.forceAppUpdate();
             },

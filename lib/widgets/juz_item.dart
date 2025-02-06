@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:islamina_app/utils/extension.dart';
 
@@ -23,6 +24,7 @@ class JuzItem extends StatelessWidget {
       Get.toNamed(
         Routes.QURAN_READING_PAGE,
         arguments: QuranNavigationArgumentModel(
+          isKhatma: false,
           surahNumber: surahNumber ?? surahAndVerses.keys.first,
           pageNumber: page,
           verseNumber: verseNumber ?? surahAndVerses.values.first.first,
@@ -68,7 +70,7 @@ class JuzItem extends StatelessWidget {
                       onPressed: () async {
                         goToPage(currentPage, null, null);
                       },
-                      child: const Text('اقرأ الجزء'),
+                      child:  Text(context.translate('readTheJuz')),
                     ),
                   ],
                 ),

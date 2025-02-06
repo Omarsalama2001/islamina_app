@@ -1,12 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 
 class CustomButtonBigIcon extends StatelessWidget {
-  const CustomButtonBigIcon(
-      {super.key,
-      required this.text,
-      required this.iconData,
-      required this.onTap});
+  const CustomButtonBigIcon({super.key, required this.text, required this.iconData, required this.onTap});
   final String text;
   final IconData iconData;
   final Function() onTap;
@@ -37,7 +34,7 @@ class CustomButtonBigIcon extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 3.0),
                 child: AutoSizeText(
-                  text,
+                  context.translate(text),
                   minFontSize: 5,
                   textAlign: TextAlign.center,
                   maxLines: 1,

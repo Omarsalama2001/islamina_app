@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root_layout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_xmedium">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.30"
+        android:background="@drawable/widget_layout_rounded_top_corners"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/date_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xmedium"
+                android:layout_marginLeft="@dimen/spacing_xmedium"
+                android:fontFamily="sans-serif"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                android:text="mon 12 safar -13 july 2024"
+                tools:text="mon 12 safar -13 july 2024" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.9"
+        android:background="@drawable/widget_layout_rounded_bottom_corners"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/fajr_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/fajr"
+                tools:src="@drawable/fajr" />
+
+
+            <TextView
+                android:id="@+id/fajr_title_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                android:text="الفجر"
+                tools:text="@string/SHORT_FAJR" />
+
+            <TextView
+                android:id="@+id/fajr_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                tools:text="000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/chourouk_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/fajr"
+                tools:src="@drawable/fajr" />
+
+            <TextView
+                android:id="@+id/chourouk_title_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                android:text="الشروق"
+                tools:text="@string/SUNRISE" />
+
+            <TextView
+                android:id="@+id/chourouk_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                tools:text="7:30 AM" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/duhr_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/dhuhr"
+                tools:src="@drawable/dhuhr" />
+            <TextView
+                android:id="@+id/dohr_title_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                android:text="الظهر"
+                tools:text="@string/SHORT_DHOHR" />
+
+            <TextView
+                android:id="@+id/dohr_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                tools:text="000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/asr_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/asr"
+                tools:src="@drawable/asr" />
+            <TextView
+                android:id="@+id/asr_title_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                android:text="العصر"
+                tools:text="@string/SHORT_ASR" />
+
+            <TextView
+                android:id="@+id/asr_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                tools:text="000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/maghrib_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/maghrib"
+                tools:src="@drawable/maghrib" />
+
+            <TextView
+                android:id="@+id/maghrib_title_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                android:text="المغرب"
+                tools:text="@string/SHORT_MAGHRIB" />
+
+            <TextView
+                android:id="@+id/maghrib_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                tools:text="000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/isha_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/isha"
+                tools:src="@drawable/isha" />
+            <TextView
+                android:id="@+id/ichaa_title_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                android:text="العشاء"
+                tools:text="@string/SHORT_ICHA" />
+
+            <TextView
+                android:id="@+id/ichaa_text_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:fontFamily="sans-serif-condensed"
+
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="1.5"
+                android:shadowDy="1.5"
+                android:shadowRadius="1.5"
+                android:textColor="@color/black_squeeze"
+                android:textSize="@dimen/widget_text_medium"
+                tools:text="000" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

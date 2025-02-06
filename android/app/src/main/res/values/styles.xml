@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is off -->
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <!-- Show a splash screen on the activity. Automatically removed when
@@ -19,5 +20,26 @@
    <style name="AppTheme" >    
         <item name="android:windowLayoutInDisplayCutoutMode"> shortEdges </item>   <!-- most important thing --> 
         <item name="android:windowBackground">?android:colorBackground</item>
+    </style>
+    <style name="WidgetBaseTheme">
+        <item name="labelColor">@color/secondary_text_color</item>
+        <item name="labelActiveColor">@color/active_prayer</item>
+        <item name="labelFontSize">12sp</item>
+    </style>
+
+    <style name="WidgetExpandedBaseTheme" parent="WidgetBaseTheme">
+        <item name="labelFontSize">14sp</item>
+    </style>
+    <style name="PrayerLabels">
+        <item name="android:textColor">?attr/labelColor</item>
+        <item name="android:textSize">?attr/labelFontSize</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="PrayerLabelsActive" parent="PrayerLabels">
+        <item name="android:textColor">?attr/labelActiveColor</item>
     </style>
 </resources>

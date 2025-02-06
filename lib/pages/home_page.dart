@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/pages/prayer_time_page.dart';
 import '../controllers/home_controller.dart';
 import 'main_page.dart';
@@ -13,7 +14,7 @@ class HomePage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Obx(() {
       return Scaffold(
-        body: const [
+        body: [
           MainPage(),
           QuranMainDashboradPage(),
           PrayerTimePage(),
@@ -25,26 +26,26 @@ class HomePage extends GetView<HomeController> {
           },
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           selectedIndex: controller.selectedDestination.value,
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(FluentIcons.home_24_regular),
-              selectedIcon: Icon(FluentIcons.home_24_filled),
-              label: "الرئيسية",
+              icon: const Icon(FluentIcons.home_24_regular),
+              selectedIcon: const Icon(FluentIcons.home_24_filled),
+              label: Get.context!.translate('home'),
             ),
             NavigationDestination(
               icon: Icon(FluentIcons.book_24_regular),
               selectedIcon: Icon(FluentIcons.book_24_filled),
-              label: "القرآن الكريم",
+              label: Get.context!.translate('quran'),
             ),
             NavigationDestination(
               icon: Icon(FluentIcons.clock_24_regular),
               selectedIcon: Icon(FluentIcons.clock_24_filled),
-              label: "أوقات الصلاة",
+              label: Get.context!.translate('prayerTimes'),
             ),
             NavigationDestination(
               icon: Icon(FluentIcons.more_circle_24_regular),
               selectedIcon: Icon(FluentIcons.more_circle_24_filled),
-              label: "المزيد",
+              label: Get.context!.translate('more'),
             ),
           ],
         ),

@@ -50,6 +50,13 @@ class DatabaseService extends GetxController {
     update(); // Notify GetX that the data has changed
   }
 
+  // Delete all data from the database
+  Future<void> deleteAllData({required String tableName}) async {
+    await initDatabase();
+    await _database.delete(tableName);
+    update(); // Notify GetX that the data has changed
+  }
+
   Future<List<Map<String, dynamic>>> queryData({required String query}) async {
     await initDatabase();
     return await _database.rawQuery(query);

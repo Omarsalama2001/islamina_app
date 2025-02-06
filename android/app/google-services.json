@@ -1,26 +1,67 @@
 {
   "project_info": {
-    "project_number": "845355176830",
-    "project_id": "islamina-d1c6a",
-    "storage_bucket": "islamina-d1c6a.appspot.com"
+    "project_number": "523141448817",
+    "project_id": "islamana-6139e",
+    "storage_bucket": "islamana-6139e.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:845355176830:android:4767b13b45ffbc51f3592f",
+        "mobilesdk_app_id": "1:523141448817:android:42c07d48a16e44a97887d0",
         "android_client_info": {
           "package_name": "com.islamina.islamina_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "523141448817-1g5probsbhikav2tgocnc43vots4r2ab.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.islamina.islamina_app",
+            "certificate_hash": "9044f75c6b0fb2ae752dfbf166063f036619c92d"
+          }
+        },
+        {
+          "client_id": "523141448817-jpademkkvaekat8jfvrjl7u3s2elu8pq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.islamina.islamina_app",
+            "certificate_hash": "b710d968edf6af3970b6dd8a143aac51d7e23970"
+          }
+        },
+        {
+          "client_id": "523141448817-ohn51vdb0di4jmlgkadq1nn634d5cd5c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.islamina.islamina_app",
+            "certificate_hash": "2ca8821d12e6b5040754b6dd0dc483e75e0e4ad4"
+          }
+        },
+        {
+          "client_id": "523141448817-3dt384lcq3uclj4re9u4kubbudahdnor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyD2r1QxdlDSO9FH8mKKupwMkOz2bE9yMdw"
+          "current_key": "AIzaSyAxwvv3jRfoQr9VPK909zanz0aFP3gZA-M"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "523141448817-3dt384lcq3uclj4re9u4kubbudahdnor.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "523141448817-vme1o9q585v74huquj0npe9dh5ssuhjv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.islamina.islaminaApp"
+              }
+            }
+          ]
         }
       }
     }

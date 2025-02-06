@@ -1,12 +1,20 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_islamic_icons/flutter_islamic_icons.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
+import 'package:islamina_app/data/cache/app_settings_cache.dart';
+import 'package:islamina_app/data/cache/app_settings_cache.dart';
 import 'package:islamina_app/data/cache/app_settings_cache.dart';
 import 'package:islamina_app/pages/azkar_settings_page.dart';
 import 'package:islamina_app/pages/prayer_settings_page.dart';
+import 'package:islamina_app/pages/silent_page.dart';
 import 'package:islamina_app/routes/app_pages.dart';
 import 'package:islamina_app/utils/utils.dart';
+import 'package:islamina_app/widgets/language_dialog_widget.dart';
+
 
 class AppSettingsPage extends GetView {
   const AppSettingsPage({super.key});
@@ -19,15 +27,15 @@ class AppSettingsPage extends GetView {
     return Scaffold(
       appBar: AppBar(
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
-        title: const Text(
-          'إعدادات التطبيق',
+        title: Text(
+          context.translate('appSettings'),
         ),
       ),
       body: ListView(
         children: [
           ListTile(
             title: Text(
-              'عام',
+              context.translate('public'),
               style: titleTextStyle!.copyWith(color: theme.primaryColor),
             ),
             dense: true,
@@ -49,24 +57,33 @@ class AppSettingsPage extends GetView {
             leading: const Icon(Icons.brightness_6_rounded),
             onTap: () => Get.dialog(ChangeThemeDialog()),
             title: Text(
-              'مظهر التطبيق',
+              context.translate('appTheme'),
               style: titleTextStyle,
             ),
             subtitle: Text(
-              Utils.themeModeToArabicText(AppSettingsCache.getThemeMode()),
+              BlocProvider.of<ThemeCubit>(context).locale.languageCode == 'ar' ? Utils.themeModeToArabicText(AppSettingsCache.getThemeMode()) : AppSettingsCache.getThemeMode().name,
               style: subtitleTextStyle,
             ),
             dense: true,
           ),
           ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(
+              context.translate('appLange'),
+              style: titleTextStyle,
+            ),
+            subtitle: LangageDialogWidget(),
+          ),
+          // LangageDialogWidget(),
+          ListTile(
             leading: const Icon(Icons.app_settings_alt_rounded),
             onTap: () => Get.toNamed(Routes.QURAN_DISPLAY_SETTINGS),
             title: Text(
-              'القرآن الكريم',
+              context.translate('quran'),
               style: titleTextStyle,
             ),
             subtitle: Text(
-              'العرض,الصوت,ادارة التنزيلات',
+              context.translate('quranSettings'),
               style: subtitleTextStyle,
             ),
             dense: true,
@@ -75,11 +92,24 @@ class AppSettingsPage extends GetView {
             leading: const Icon(FluentIcons.clock_12_regular),
             onTap: () => Get.to(() => const PrayerSettingsPage()),
             title: Text(
-              'أوقات الصلاة',
+              context.translate('prayerTimes'),
               style: titleTextStyle,
             ),
             subtitle: Text(
-              'طرق الحساب,المذهب,اشعارا الصلوات',
+              context.translate('prayerSettingsDescription'),
+              style: subtitleTextStyle,
+            ),
+            dense: true,
+          ),
+                 ListTile(
+            leading: const Icon(FluentIcons.speaker_off_16_regular),
+            onTap: () => Get.to(() => const SilentPage()),
+            title: Text(
+              context.translate('silent_settings'),
+              style: titleTextStyle,
+            ),
+            subtitle: Text(
+              context.translate('silent_settings_description'),
               style: subtitleTextStyle,
             ),
             dense: true,
@@ -88,11 +118,11 @@ class AppSettingsPage extends GetView {
             leading: const Icon(FlutterIslamicIcons.tasbih3),
             onTap: () => Get.to(() => AzkarSettingsPage()),
             title: Text(
-              'أذكار',
+              context.translate('azkar'),
               style: titleTextStyle,
             ),
             subtitle: Text(
-              'الخط, الاشعارات',
+              context.translate('azkarSettingsDescription'),
               style: subtitleTextStyle,
             ),
             dense: true,
@@ -109,7 +139,7 @@ class ChangeThemeDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('المظهر'),
+      title: Text(context.translate('theme')),
       content: Obx(() {
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -118,7 +148,7 @@ class ChangeThemeDialog extends StatelessWidget {
               value: ThemeMode.light,
               groupValue: theme.value,
               title: Text(
-                Utils.themeModeToArabicText(ThemeMode.light),
+                BlocProvider.of<ThemeCubit>(context).locale.languageCode == 'ar' ? Utils.themeModeToArabicText(ThemeMode.light) : ThemeMode.light.name,
               ),
               onChanged: (value) {
                 theme.value = ThemeMode.light;
@@ -128,7 +158,7 @@ class ChangeThemeDialog extends StatelessWidget {
               value: ThemeMode.dark,
               groupValue: theme.value,
               title: Text(
-                Utils.themeModeToArabicText(ThemeMode.dark),
+                BlocProvider.of<ThemeCubit>(context).locale.languageCode == 'ar' ? Utils.themeModeToArabicText(ThemeMode.dark) : ThemeMode.dark.name,
               ),
               onChanged: (value) {
                 theme.value = ThemeMode.dark;
@@ -138,7 +168,7 @@ class ChangeThemeDialog extends StatelessWidget {
               value: ThemeMode.system,
               groupValue: theme.value,
               title: Text(
-                Utils.themeModeToArabicText(ThemeMode.system),
+                BlocProvider.of<ThemeCubit>(context).locale.languageCode == 'ar' ? Utils.themeModeToArabicText(ThemeMode.system) : ThemeMode.system.name,
               ),
               onChanged: (value) {
                 theme.value = ThemeMode.system;
@@ -150,7 +180,7 @@ class ChangeThemeDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Get.back(),
-          child: const Text('إلغاء'),
+          child:  Text(context.translate('cancel')),
         ),
         TextButton(
           onPressed: () {
@@ -158,7 +188,7 @@ class ChangeThemeDialog extends StatelessWidget {
 
             AppSettingsCache.setThemeMode(themeMode: theme.value);
           },
-          child: const Text('تأكيد'),
+          child:  Text(context.translate('confirmation')),
         ),
       ],
     );

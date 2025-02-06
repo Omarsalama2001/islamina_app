@@ -3,14 +3,17 @@ import 'dart:developer';
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:islamina_app/bindings/tafsir_details_binding.dart';
 import 'package:islamina_app/controllers/quran_audio_player_controller.dart';
 import 'package:islamina_app/controllers/quran_audio_player_settings_controller.dart';
 import 'package:islamina_app/controllers/quran_reading_controller.dart';
 import 'package:islamina_app/controllers/tafsir_details_controller.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:islamina_app/data/cache/quran_reader_cache.dart';
 import 'package:islamina_app/data/models/quran_bookmark.dart';
 import 'package:islamina_app/data/models/quran_play_range_model.dart';
@@ -26,9 +29,9 @@ import '../data/cache/audio_settings_cache.dart';
 import '../../../../../services/audio/audio_manager.dart';
 import '../../../../../widgets/custom_progress_indicator.dart';
 import '../routes/app_pages.dart';
+import 'package:quran/quran.dart' as quran;
 
-class QuranAudioPlayerBottomBar
-    extends GetView<QuranAudioPlayerBottomBarController> {
+class QuranAudioPlayerBottomBar extends GetView<QuranAudioPlayerBottomBarController> {
   const QuranAudioPlayerBottomBar({super.key});
 
   @override
@@ -61,16 +64,9 @@ class QuranAudioPlayerBottomBar
                                       size: 25,
                                     ),
                                     onPressed: () {
-                                      QuranAudioPlayerBottomBarController
-                                          controller = Get.find();
+                                      QuranAudioPlayerBottomBarController controller = Get.find();
 
-                                      QuranVerseModel? verse =
-                                          quranReadingController
-                                              .currentPageData?.verses
-                                              .where((element) =>
-                                                  element.isHighlighted.value ==
-                                                  true)
-                                              .first;
+                                      QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
 
                                       if (verse != null) {
                                         controller.onMainPlayPressed(
@@ -93,36 +89,21 @@ class QuranAudioPlayerBottomBar
                                       size: 25,
                                     ),
                                     onPressed: () {
-                                      QuranVerseModel? verse =
-                                          quranReadingController
-                                              .currentPageData?.verses
-                                              .where((element) =>
-                                                  element.isHighlighted.value ==
-                                                  true)
-                                              .first;
+                                      QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
                                       if (verse != null) {
                                         try {
                                           // Try to get the TafsirDetailsController instance
-                                          final controller = Get.find<
-                                              TafsirDetailsController>();
-                                          controller.surahNumber.value =
-                                              verse.surahNumber;
-                                          controller.verseNumber.value =
-                                              verse.verseNumber;
-                                          Get.to(
-                                              () => const TafsirDetailsPage(),
-                                              fullscreenDialog: true);
+                                          final controller = Get.find<TafsirDetailsController>();
+                                          controller.surahNumber.value = verse.surahNumber;
+                                          controller.verseNumber.value = verse.verseNumber;
+                                          Get.to(() => const TafsirDetailsPage(), fullscreenDialog: true);
                                         } catch (e, stackTrace) {
-                                          log(e.toString(),
-                                              stackTrace: stackTrace);
+                                          log(e.toString(), stackTrace: stackTrace);
                                         }
                                         // Navigate to TafsirDetailsPage
                                         Get.to(
                                           () => const TafsirDetailsPage(),
-                                          arguments: {
-                                            'surahNumber': verse.surahNumber,
-                                            'verseNumber': verse.verseNumber
-                                          },
+                                          arguments: {'surahNumber': verse.surahNumber, 'verseNumber': verse.verseNumber},
                                           binding: TafsirDetailsBinding(),
                                           fullscreenDialog: true,
                                         );
@@ -130,23 +111,10 @@ class QuranAudioPlayerBottomBar
                                     },
                                   ),
                                   IconButton(
-                                    icon: Get.put(AyahBottomSheetController())
-                                            .isBookmarked
-                                            .value
-                                        ? const Icon(
-                                            FluentIcons.bookmark_off_20_regular)
-                                        : const Icon(FluentIcons
-                                            .bookmark_add_20_regular),
+                                    icon: Get.put(AyahBottomSheetController()).isBookmarked.value ? const Icon(FluentIcons.bookmark_off_20_regular) : const Icon(FluentIcons.bookmark_add_20_regular),
                                     onPressed: () async {
-                                      final ayahController =
-                                          Get.put(AyahBottomSheetController());
-                                      QuranVerseModel? verse =
-                                          quranReadingController
-                                              .currentPageData?.verses
-                                              .where((element) =>
-                                                  element.isHighlighted.value ==
-                                                  true)
-                                              .first;
+                                      final ayahController = Get.put(AyahBottomSheetController());
+                                      QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
                                       if (verse != null) {
                                         ayahController.bookmark = Bookmark(
                                           surah: verse.surahNumber,
@@ -158,21 +126,188 @@ class QuranAudioPlayerBottomBar
                                     // onPressed: ayahController.onBookmarkPressed,
                                   ),
                                   IconButton(
+                                    icon: const Icon(Icons.translate),
+                                    onPressed: () async {
+                                      showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          backgroundColor: Colors.white,
+                                          useSafeArea: true,
+                                          context: context,
+                                          builder: (context) => SingleChildScrollView(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      child: Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          IconButton(
+                                                              icon: const Icon(Icons.copy),
+                                                              onPressed: () async {
+                                                                QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
+                                                                if (verse != null) {
+                                                                  final shareText = '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)}\n ${getVerseTranslation(verse.surahNumber, verse.verseNumber, translation: quranReadingController.translation)}';
+                                                                  Utils.copyToClipboard(text: shareText);
+                                                                }
+                                                              }),
+                                                          IconButton(
+                                                              icon: const Icon(Icons.share),
+                                                              onPressed: () async {
+                                                                QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
+                                                                if (verse != null) {
+                                                                  final shareText = '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)} \n ${getVerseTranslation(verse.surahNumber, verse.verseNumber, translation: quranReadingController.translation)}';
+                                                                  Utils.shareText(text: shareText);
+                                                                }
+                                                              }),
+                                                          IconButton(
+                                                            icon: const Icon(
+                                                              FluentIcons.book_question_mark_24_regular,
+                                                              size: 25,
+                                                            ),
+                                                            onPressed: () {
+                                                              QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
+                                                              if (verse != null) {
+                                                                try {
+                                                                  // Try to get the TafsirDetailsController instance
+                                                                  final controller = Get.find<TafsirDetailsController>();
+                                                                  controller.surahNumber.value = verse.surahNumber;
+                                                                  controller.verseNumber.value = verse.verseNumber;
+                                                                  Get.to(() => const TafsirDetailsPage(), fullscreenDialog: true);
+                                                                } catch (e, stackTrace) {
+                                                                  log(e.toString(), stackTrace: stackTrace);
+                                                                }
+                                                                // Navigate to TafsirDetailsPage
+                                                                Get.to(
+                                                                  () => const TafsirDetailsPage(),
+                                                                  arguments: {'surahNumber': verse.surahNumber, 'verseNumber': verse.verseNumber},
+                                                                  binding: TafsirDetailsBinding(),
+                                                                  fullscreenDialog: true,
+                                                                );
+                                                              }
+                                                            },
+                                                          ),
+                                                          GetBuilder(
+                                                            init: AyahBottomSheetController(),
+                                                            builder: (controller) => IconButton(
+                                                              icon: Get.put(AyahBottomSheetController()).isBookmarked.value ? const Icon(FluentIcons.bookmark_off_20_regular) : const Icon(FluentIcons.bookmark_add_20_regular),
+                                                              onPressed: () async {
+                                                                final ayahController = Get.put(AyahBottomSheetController());
+                                                                QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
+                                                                if (verse != null) {
+                                                                  ayahController.bookmark = Bookmark(
+                                                                    surah: verse.surahNumber,
+                                                                    verse: verse.verseNumber,
+                                                                  );
+                                                                  ayahController.onBookmarkPressed();
+                                                                }
+                                                              },
+                                                              // onPressed: ayahController.onBookmarkPressed,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: quranReadingController.currentPageData!.verses.where((element) => element.isHighlighted.value == true).isNotEmpty
+                                                          ? Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Center(
+                                                                  child: Text(
+                                                                    '${quranReadingController.currentPageData!.verses.where((element) => element.isHighlighted.value == true).first.surahNumber}:${quranReadingController.currentPageData!.verses.where((element) => element.isHighlighted.value == true).first.verseNumber}',
+                                                                  ),
+                                                                ),
+                                                                GetBuilder(
+                                                                    init: quranReadingController,
+                                                                    builder: (quranReadingController) => Text(
+                                                                          quranReadingController.currentPageData!.verses.where((element) => element.isHighlighted.value == true).firstOrNull?.textUthmaniSimple ?? '',
+                                                                          style: GoogleFonts.amiri(),
+                                                                        )),
+                                                                GetBuilder(
+                                                                  init: quranReadingController,
+                                                                  builder: (quranReadingController) => Text(
+                                                                    quran.getVerseTranslation(quranReadingController.currentPageData!.verses.where((element) => element.isHighlighted.value == true).firstOrNull?.surahNumber ?? 1, quranReadingController.currentPageData!.verses.where((element) => element.isHighlighted.value == true).firstOrNull?.verseNumber ?? 1, translation: quranReadingController.translation),
+                                                                    textAlign: TextAlign.start,
+                                                                    textDirection: TextDirection.ltr,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : Center(
+                                                              child: Text(
+                                                              'لم يتم أختيار أي أيه',
+                                                              style: GoogleFonts.amiri(),
+                                                            )),
+                                                    ),
+                                                    Align(
+                                                      alignment: Alignment.centerLeft,
+                                                      child: GetBuilder(
+                                                        init: QuranReadingController(),
+                                                        builder: (QuranReadingController quranReadingController) => DropdownButton(
+                                                          alignment: Alignment.centerLeft,
+                                                          dropdownColor: Colors.white,
+                                                          padding: const EdgeInsets.only(left: 10),
+                                                          underline: null,
+                                                          icon: const Icon(Icons.language),
+                                                          hint: Text(quranReadingController.selcetedTranslationLanguage),
+                                                          items: const [
+                                                            DropdownMenuItem(
+                                                              value: 'English (Saheeh International)',
+                                                              child: Text('English (Saheeh International)'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'English (Clear Quran)',
+                                                              child: Text('English (Clear Quran)'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'French (Muhammad Hamidullah)',
+                                                              child: Text('French (Muhammad Hamidullah)'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Turkish',
+                                                              child: Text('Turkish'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Italian',
+                                                              child: Text('Italian'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Dutch',
+                                                              child: Text('Dutch'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Russian',
+                                                              child: Text('Russian'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Portuguese',
+                                                              child: Text('Portuguese'),
+                                                            ),
+                                                          ],
+                                                          onChanged: (value) {
+                                                            quranReadingController.mapSelectedTranslationLanguage(value!);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ));
+                                    },
+                                  ),
+                                  IconButton(
                                     icon: const Icon(
                                       FluentIcons.copy_16_regular,
                                       size: 25,
                                     ),
                                     onPressed: () {
-                                      QuranVerseModel? verse =
-                                          quranReadingController
-                                              .currentPageData?.verses
-                                              .where((element) =>
-                                                  element.isHighlighted.value ==
-                                                  true)
-                                              .first;
+                                      QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
                                       if (verse != null) {
-                                        final shareText =
-                                            '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)}';
+                                        final shareText = '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)}';
                                         Utils.copyToClipboard(text: shareText);
                                       }
                                     },
@@ -183,16 +318,9 @@ class QuranAudioPlayerBottomBar
                                       size: 25,
                                     ),
                                     onPressed: () {
-                                      QuranVerseModel? verse =
-                                          quranReadingController
-                                              .currentPageData?.verses
-                                              .where((element) =>
-                                                  element.isHighlighted.value ==
-                                                  true)
-                                              .first;
+                                      QuranVerseModel? verse = quranReadingController.currentPageData?.verses.where((element) => element.isHighlighted.value == true).first;
                                       if (verse != null) {
-                                        final shareText =
-                                            '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)}';
+                                        final shareText = '${getSurahNameArabic(verse.surahNumber)} (الآية ${verse.verseNumber})\n ${getVerse(verse.surahNumber, verse.verseNumber)}';
                                         Utils.shareText(text: shareText);
                                       }
                                     },
@@ -237,17 +365,7 @@ class QuranAudioPlayerBottomBar
                                       size: 25,
                                     ),
                                     onPressed: () {
-                                      QuranAudioPlayerBottomBarController
-                                          controller = Get.find();
-
-                                      QuranVerseModel? verse =
-                                          quranReadingController
-                                              .currentPageData?.verses
-                                              .where((element) =>
-                                                  element.isHighlighted.value ==
-                                                  true)
-                                              .first;
-
+                                      QuranVerseModel? verse = quranReadingController.currentPageData?.verses.first;
                                       if (verse != null) {
                                         controller.onMainPlayPressed(
                                           playRangeModel: QuranPlayRangeModel(
@@ -265,14 +383,9 @@ class QuranAudioPlayerBottomBar
 
                                   FilledButton.icon(
                                     // onPressed: controller.onMainPlayPressed,
-                                    onPressed: () =>
-                                        selectReaderSheet().then((value) {
+                                    onPressed: () => selectReaderSheet().then((value) {
                                       controller.update();
-                                      Get.find<QuranAudioPlayerBottomBarController>()
-                                              .selectedReader
-                                              .value =
-                                          QuranReaderCache
-                                              .getSelectedReaderFromCache();
+                                      Get.find<QuranAudioPlayerBottomBarController>().selectedReader.value = QuranReaderCache.getSelectedReaderFromCache();
                                     }),
                                     icon: const Icon(
                                       // FluentIcons.arrow_down_48_regular,
@@ -280,10 +393,8 @@ class QuranAudioPlayerBottomBar
                                       size: 26,
                                     ),
                                     label: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         // Text(
                                         //   'تشغيل التلاوة',
@@ -292,8 +403,7 @@ class QuranAudioPlayerBottomBar
                                         Obx(
                                           () {
                                             return Text(
-                                              controller
-                                                  .selectedReader.value.name,
+                                           BlocProvider.of<ThemeCubit>(context).locale.languageCode == 'ar' ? controller.selectedReader.value.name :   controller.selectedReader.value.englishName,
                                               style: TextStyle(fontSize: 14.sp),
                                             );
                                           },
@@ -309,15 +419,10 @@ class QuranAudioPlayerBottomBar
                                         .entries
                                         .map((e) => GestureDetector(
                                               onTap: () {
-                                                Get.find<
-                                                        QuranReadingController>()
-                                                    .changeBackgroundColor(
-                                                        e.key);
+                                                Get.find<QuranReadingController>().changeBackgroundColor(e.key);
                                               },
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .only(end: 5),
+                                                padding: const EdgeInsetsDirectional.only(end: 5),
                                                 child: CircleAvatar(
                                                   radius: 13,
                                                   backgroundColor: e.value,
@@ -429,8 +534,7 @@ class QuranAudioPlayerBottomBar
                           onPressed: () {
                             Get.toNamed(
                               Routes.AUDIO_SETTINGS,
-                              arguments: controller
-                                  .quranPageViewController.currentPageData,
+                              arguments: controller.quranPageViewController.currentPageData,
                             );
                           },
                         ),
@@ -438,8 +542,7 @@ class QuranAudioPlayerBottomBar
                     )
                   : const SizedBox(),
             ),
-            Obx(() => controller.isControlsVisible.value &&
-                    controller.audioHandler != null
+            Obx(() => controller.isControlsVisible.value && controller.audioHandler != null
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
@@ -450,17 +553,12 @@ class QuranAudioPlayerBottomBar
                             stream: controller.audioHandler!.playbackState,
                             builder: (context, snapshot) {
                               final playbackState = snapshot.data;
-                              final processingState =
-                                  playbackState?.processingState;
+                              final processingState = playbackState?.processingState;
                               final playing = playbackState?.playing;
-                              if (processingState ==
-                                      AudioProcessingState.loading ||
-                                  processingState ==
-                                      AudioProcessingState.buffering) {
+                              if (processingState == AudioProcessingState.loading || processingState == AudioProcessingState.buffering) {
                                 return Container(
                                   margin: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child: CustomCircularProgressIndicator()),
+                                  child: Center(child: CustomCircularProgressIndicator()),
                                 );
                               } else if (playing != true) {
                                 return IconButton.filled(
@@ -489,10 +587,11 @@ class QuranAudioPlayerBottomBar
                                   visualDensity: VisualDensity.compact,
                                 ),
                                 onPressed: () {
+                                  final QuranReadingController quranPageViewController = Get.find();
                                   controller.audioHandler!.stop();
                                   controller.isControlsVisible.value = false;
-                                  AudioSettingsCache.setPlayRangeValidState(
-                                      isValid: false);
+                                  quranPageViewController.changePageWithVolumeKeys();
+                                  AudioSettingsCache.setPlayRangeValidState(isValid: false);
                                 },
                                 icon: const Icon(
                                   FluentIcons.stop_16_regular,
@@ -516,15 +615,12 @@ class QuranAudioPlayerBottomBar
                               StreamBuilder<QueueState>(
                                 stream: controller.audioHandler!.queueState,
                                 builder: (context, snapshot) {
-                                  final queueState =
-                                      snapshot.data ?? QueueState.empty;
+                                  final queueState = snapshot.data ?? QueueState.empty;
                                   return IconButton(
                                     style: IconButton.styleFrom(
                                       visualDensity: VisualDensity.compact,
                                     ),
-                                    onPressed: queueState.hasNext
-                                        ? controller.audioHandler!.skipToNext
-                                        : null,
+                                    onPressed: queueState.hasNext ? controller.audioHandler!.skipToNext : null,
                                     icon: const Icon(
                                       FluentIcons.fast_forward_20_regular,
                                     ),
@@ -534,8 +630,7 @@ class QuranAudioPlayerBottomBar
                               StreamBuilder<QueueState>(
                                 stream: controller.audioHandler!.queueState,
                                 builder: (context, snapshot) {
-                                  final queueState =
-                                      snapshot.data ?? QueueState.empty;
+                                  final queueState = snapshot.data ?? QueueState.empty;
                                   return IconButton(
                                     style: IconButton.styleFrom(
                                       visualDensity: VisualDensity.compact,
@@ -546,10 +641,7 @@ class QuranAudioPlayerBottomBar
                                         FluentIcons.fast_forward_20_regular,
                                       ),
                                     ),
-                                    onPressed: queueState.hasPrevious
-                                        ? controller
-                                            .audioHandler!.skipToPrevious
-                                        : null,
+                                    onPressed: queueState.hasPrevious ? controller.audioHandler!.skipToPrevious : null,
                                   );
                                 },
                               ),
@@ -606,8 +698,7 @@ class QuranAudioPlayerBottomBar
                         onPressed: () {
                           Get.toNamed(
                             Routes.AUDIO_SETTINGS,
-                            arguments: controller
-                                .quranPageViewController.currentPageData,
+                            arguments: controller.quranPageViewController.currentPageData,
                           );
                         },
                       ),
@@ -639,9 +730,7 @@ class QuranAudioPlayerBottomBar
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: controller.selectedRepeat == e.value
-                          ? theme.primaryColor.withOpacity(0.5)
-                          : Colors.transparent,
+                      color: controller.selectedRepeat == e.value ? theme.primaryColor.withOpacity(0.5) : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: ListTile(

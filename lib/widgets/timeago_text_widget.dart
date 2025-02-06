@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class TimeAgoWidget extends StatefulWidget {
@@ -39,7 +41,7 @@ class TimeAgoWidgetState extends State<TimeAgoWidget> {
     setState(() {
       _timeAgo = timeago.format(
         widget.targetDate,
-        locale: 'ar',
+        locale: BlocProvider.of<ThemeCubit>(context).locale.languageCode,
       );
     });
   }

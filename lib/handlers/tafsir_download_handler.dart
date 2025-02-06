@@ -11,10 +11,9 @@ class TafsirDownloadHandler {
     Utils.deleteDirectory(filePath: fullPath);
   }
 
-  Future<bool> downloadTafsir(
-      {required Tafsir tafsir,
-      required Function(int count, int total) onReceiveProgress}) async {
+  Future<bool> downloadTafsir({required Tafsir tafsir, required Function(int count, int total) onReceiveProgress}) async {
     final saveLocation = await SaveLocationsPaths.getTafsirSaveLocationUrl();
+
     if (await Utils.checkForInternetConnection()) {
       if (await DownloadService().downloadFile(
         url: tafsir.url,

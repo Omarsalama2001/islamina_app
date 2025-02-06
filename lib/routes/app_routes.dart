@@ -4,6 +4,7 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
+
   static const HOME = _Paths.HOME;
   static const PRAYER_TIMES = _Paths.PRAYER_TIMES;
   static const MAIN = _Paths.MAIN;
@@ -26,12 +27,23 @@ abstract class Routes {
   static const QURAN_SEARCH_VIEW = _Paths.QURAN_SEARCH_VIEW;
   static const QIBLA_VR = _Paths.QIBLA_VR;
   static const KHATMA = _Paths.KHATMA;
+  static const TestQibla = _Paths.testQibla;
+  static const splash= _Paths.Splash;
+  static const login= _Paths.login;
+  static const sebha=_Paths.Sebha;
+  static const test=_Paths.Test;
+  static const radio=_Paths.Radio;
 }
 
 abstract class _Paths {
   _Paths._();
+  static const Radio = '/radio';
+  static const Test = '/test';
+  static const Sebha = '/sebha';
   static const HOME = '/home';
   static const PRAYER_TIMES = '/prayer-times';
+  static const Splash = '/splash';
+  static const login= '/login';
   static const MAIN = '/main';
   static const QURAN_MAIN = '/quran-main';
   static const MORE_ACTIVITIES = '/more-activities';
@@ -52,4 +64,7 @@ abstract class _Paths {
   static const QURAN_SEARCH_VIEW = '/quran-search-view';
   static const QIBLA_VR = '/qibla-vr';
   static const KHATMA = '/khatma';
+    static const testQibla = '/test-qibla';
+
+  
 }

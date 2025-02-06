@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:get/get.dart';
 import 'package:islamina_app/controllers/quran_audio_player_settings_controller.dart';
 import 'package:islamina_app/data/models/quran_play_range_model.dart';
@@ -14,6 +15,7 @@ import 'quran_reading_controller.dart';
 class QuranAudioPlayerBottomBarController extends GetxController {
   // Instance of the audio handler
   AudioPlayerHandlerImpl? audioHandler;
+
 
   // Observable to track visibility of controls
   final isControlsVisible = false.obs;
@@ -92,6 +94,7 @@ class QuranAudioPlayerBottomBarController extends GetxController {
     // } else {
     //   startPlaying(playRangeModel: playRangeModel, isWordByWord: false);
     // }
+    quranPageViewController.volumeController.removeListener();
     startPlaying(playRangeModel: playRangeModel, isWordByWord: false);
   }
 

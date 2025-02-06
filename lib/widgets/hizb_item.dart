@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:quran/quran.dart';
 import 'package:islamina_app/utils/extension.dart';
 import 'surah_verse.dart';
@@ -29,13 +30,11 @@ class HizbItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          ' حزب $hizbNumber',
+                          ' ${context.translate('hizb')} $hizbNumber',
                           maxLines: 1,
                           style: const TextStyle(fontSize: 20),
                         ),
-                        SurahVerseWidget(
-                            surah: (hizbData['surah'] as int),
-                            verse: (hizbData['verse'] as int))
+                        SurahVerseWidget(surah: (hizbData['surah'] as int), verse: (hizbData['verse'] as int))
                       ],
                     ),
                   ],
@@ -45,16 +44,8 @@ class HizbItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    getVerse(hizbData['surah']!.toInt(),
-                            hizbData['verse']!.toInt())
-                        .split(' ')
-                        .take(4)
-                        .toList()
-                        .join(' ')
-                        .replaceAll('۞', ''),
-                    style: const TextStyle(
-                        fontFamily: 'Uthmanic_Script',
-                        fontWeight: FontWeight.bold),
+                    getVerse(hizbData['surah']!.toInt(), hizbData['verse']!.toInt()).split(' ').take(4).toList().join(' ').replaceAll('۞', ''),
+                    style: const TextStyle(fontFamily: 'Uthmanic_Script', fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/data/repository/hadith40_repository.dart';
 import 'package:islamina_app/pages/hadith40_details_page.dart';
 
@@ -11,7 +12,7 @@ class Hadith40Page extends GetView {
     var theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('الاربعون النووية'),
+        title:  Text(context.translate('hadith40')),
         titleTextStyle: theme.primaryTextTheme.titleMedium,
       ),
       body: FutureBuilder(

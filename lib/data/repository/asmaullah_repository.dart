@@ -17,6 +17,6 @@ class AsmaullahRepository {
     final List<dynamic> jsonData = await json.decode(filePath);
     return jsonData
         .map((e) => AsmaullahModel.fromJson(e))
-        .toList()[Random().nextInt(99)];
+        .toList()[Random().nextInt(100)];
   }
 }

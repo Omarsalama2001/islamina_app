@@ -21,6 +21,13 @@ extension IntExtension on int {
     return surah[this - 1]['arabic'].toString();
   }
 
+  String get getSurahNameEnglish {
+    if (this > 114 || this <= 0) {
+      throw "No Surah found with given surahNumber";
+    }
+    return surah[this - 1]['english'].toString();
+  }
+
   Map<String, int> get getHizbData {
     if (this > 60 || this < 0) {
       throw "No Hizb found with given hizbNumber";
@@ -35,16 +42,17 @@ extension IntExtension on int {
   String get getJuzName {
     return customJuz[this - 1]["name"];
   }
-
+String get getJuzNameEnglish {
+    return customJuz[this - 1]["english_name"];
+  
+}
   String placeRevelation({bool arabic = true}) {
     if (this > 114 || this <= 0) {
       throw "No Surah found with given surahNumber";
     }
 
     if (arabic) {
-      return surah[this - 1]['place'].toString() == 'Madinah'
-          ? 'مدنية'
-          : 'مكية';
+      return surah[this - 1]['place'].toString() == 'Madinah' ? 'مدنية' : 'مكية';
     }
 
     return surah[this - 1]['place'].toString();

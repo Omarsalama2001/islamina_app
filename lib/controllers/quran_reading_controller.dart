@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:islamina_app/constants/themes.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/features/khatma/data/models/khatma_model.dart';
+import 'package:islamina_app/services/services.dart';
 import 'package:islamina_app/utils/extension.dart';
 import 'package:quran/quran.dart';
 import 'package:islamina_app/bindings/quran_search_binding.dart';
@@ -11,6 +14,7 @@ import 'package:islamina_app/data/models/quran_page.dart';
 import 'package:islamina_app/data/models/quran_settings_model.dart';
 import 'package:islamina_app/data/models/quran_verse_model.dart';
 import 'package:islamina_app/utils/quran_utils.dart';
+import 'package:volume_controller/volume_controller.dart';
 import '../bindings/quran_audio_player_settings_binding.dart';
 import '../data/cache/audio_settings_cache.dart';
 import '../data/models/quran_navigation_data_model.dart';
@@ -23,9 +27,15 @@ import '../views/quran_bookmarks_view.dart';
 import '../views/quran_search_view.dart';
 
 class QuranReadingController extends GetxController {
+ RxBool lodding = false.obs;
+
   // selected background color index
   int selectedBackgroundColorIndex = 0;
-
+  List<GlobalKey> pageKeys = List.generate(604, (index) => GlobalKey());
+  List<GlobalKey> strokeKeys = List.generate(
+    604, // Number of Quran pages
+    (index) => GlobalKey(),
+  );
   // change the background color of the Quran page
   void changeBackgroundColor(int index) {
     selectedBackgroundColorIndex = index;
@@ -39,6 +49,46 @@ class QuranReadingController extends GetxController {
     update();
   }
 
+  int getPageEquaility(KhatmaModel khatma) {
+    String khatmaUnit = khatma.unit;
+    if (khatmaUnit == 'juz') {
+      return currentPageData!.juzNumber;
+    } else if (khatmaUnit == 'hizb') {
+      return currentPageData!.hizbNumber;
+    } else if (khatmaUnit == 'quarter_hizb') {
+      return currentPageData!.rubElHizbNumber;
+    } else if (khatmaUnit == 'surah') {
+      return currentPageData!.surahNumber;
+    } else {
+      return currentPageData!.pageNumber;
+    }
+  }
+
+  String khatmaStatus = 'normalRate';
+  getKhatmaStatus(KhatmaModel khatma) async {
+    final int pagesDifference;
+    String khatmaUnit = khatma.unit;
+    if (khatmaUnit == 'juz') {
+      pagesDifference = currentPageData!.juzNumber - khatma.lastPage;
+    } else if (khatmaUnit == 'hizb') {
+      pagesDifference = currentPageData!.hizbNumber - khatma.lastPage;
+    } else if (khatmaUnit == 'quarter_hizb') {
+      pagesDifference = currentPageData!.rubElHizbNumber - khatma.lastPage;
+    } else if (khatmaUnit == 'surah') {
+      pagesDifference = currentPageData!.surahNumber - khatma.lastPage;
+    } else {
+      pagesDifference = currentPageData!.pageNumber - khatma.lastPage;
+    }
+    if (pagesDifference == 0) {
+      khatmaStatus = 'normalRate';
+    } else if (pagesDifference > 0) {
+      khatmaStatus = '${Get.context!.translate("Youareaheadby")}$pagesDifference ${Get.context!.translate(khatma.unit)}';
+    } else {
+      khatmaStatus = '${Get.context!.translate("Youarebehindby")}${(pagesDifference.abs())} ${Get.context!.translate(khatma.unit)}';
+    }
+    update();
+  }
+
   // List of background colors for the Quran pages
   List<Color> backgroundColors = [
     Colors.white,
@@ -48,14 +98,122 @@ class QuranReadingController extends GetxController {
   ];
 
   // List to store Quran page models
-  RxList<QuranPageModel?> quranPages =
-      List<QuranPageModel?>.filled(604, null).obs;
+  RxList<QuranPageModel?> quranPages = List<QuranPageModel?>.filled(604, null).obs;
+  List<QuranPageModel?> quranForKhatma = [];
+  getAllQuranPages() async {
+    for (int pageNumber = 1; pageNumber <= 604; pageNumber++) {
+      QuranRepository quranRepository = QuranRepository();
+      try {
+        
+        quranForKhatma.add(await quranRepository.getQuranPageData(pageNumber: pageNumber));
+      } catch (e) {
+      }
+    }
+  }
+
+  String selcetedTranslationLanguage = 'English (Saheeh International)';
+  Translation translation = Translation.enClearQuran;
+
+  mapSelectedTranslationLanguage(String language) {
+    print(getVerseTranslation(2, 3, translation: Translation.enClearQuran, verseEndSymbol: true));
+    if (language == 'English (Saheeh International)') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.enSaheeh;
+    }
+    if (language == 'French (Muhammad Hamidullah)') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.frHamidullah;
+    }
+
+    if (language == 'Turkish') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.trSaheeh;
+    }
+
+    if (language == 'Italian') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.itPiccardo;
+    }
+    if (language == 'Dutch') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.nlSiregar;
+    }
+
+    if (language == 'Russian') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.ruKuliev;
+    }
+    if (language == 'Portuguese') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.portuguese;
+    }
+
+    if (language == 'English (Clear Quran)') {
+      selcetedTranslationLanguage = language;
+      translation = Translation.enClearQuran;
+    }
+    update();
+  }
 
   // Current page number
   int pageNumber = 1;
 
+  double currentVolume = 0;
+  VolumeController volumeController = VolumeController();
+
+  void initchangePageWithVolumeKeys() async {
+    volumeController.showSystemUI = false;
+    currentVolume = await volumeController.getVolume();
+    if (currentVolume == 0) {
+      volumeController.setVolume(0.7, showSystemUI: false);
+      currentVolume = await volumeController.getVolume();
+    }
+    if (currentVolume == 1) {
+      volumeController.setVolume(0.7, showSystemUI: false);
+      currentVolume = await volumeController.getVolume();
+    }
+  }
+
+  void changePageWithVolumeKeys() async {
+    initchangePageWithVolumeKeys();
+    volumeController.listener((volume) async {
+      if (volume > currentVolume) {
+        volumeController.setVolume(currentVolume, showSystemUI: false);
+        // Volume increased significantly
+        quranPageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+        currentVolume = await volumeController.getVolume();
+
+        update();
+      } else if (volume < currentVolume) {
+        volumeController.setVolume(currentVolume, showSystemUI: false);
+        currentVolume = await volumeController.getVolume();
+
+        // Volume decreased significantly
+        quranPageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+        update();
+      }
+    });
+  }
+
   // Controller for managing Quran page navigation
   final PageController quranPageController = PageController();
+  DateTime? lastScrollTime;
+
+  void _onPageScrolled() {
+    var dateNow = DateTime.now();
+
+    if (dateNow.difference(lastScrollTime!).inSeconds > 10) {
+      lastScrollTime = dateNow;
+      update();
+    } else {
+      Fluttertoast.showToast(msg: "من فضلك لا تتعجل في قرأة القرآن", backgroundColor: Colors.white, gravity: ToastGravity.BOTTOM, textColor: Colors.black, fontSize: 16);
+      lastScrollTime = dateNow;
+      update();
+    }
+
+
+    update();
+  }
 
   // Flag to indicate fullscreen mode
   final RxBool isFullScreenMode = RxBool(false);
@@ -75,8 +233,7 @@ class QuranReadingController extends GetxController {
   /// Parameters:
   /// - pageNumber: The page number to fetch Quran data for.
   /// - scrollToPage: A flag indicating whether to scroll to the specified page after fetching the data.
-  Future<void> fetchQuranPageData(
-      {required int pageNumber, required bool scrollToPage}) async {
+  Future<void> fetchQuranPageData({required int pageNumber, required bool scrollToPage}) async {
     // Calculate the index for the current page number.
     var pageIndex = pageNumber - 1;
 
@@ -95,9 +252,7 @@ class QuranReadingController extends GetxController {
     final int endPage = pageNumber + 2;
 
     // Iterate through the range of pages.
-    for (int currentPageNumber = startPage;
-        currentPageNumber <= endPage;
-        currentPageNumber++) {
+    for (int currentPageNumber = startPage; currentPageNumber <= endPage; currentPageNumber++) {
       // Check if the page number is within valid bounds (1 to 604).
       if (currentPageNumber < 1 || currentPageNumber > 604) {
         continue; // Skip invalid page numbers.
@@ -112,16 +267,14 @@ class QuranReadingController extends GetxController {
       }
 
       // Fetch the Quran page data using the repository for the current page number.
-      quranPages[currentPageIndex] = await QuranRepository()
-          .getQuranPageData(pageNumber: currentPageNumber);
+      quranPages[currentPageIndex] = await QuranRepository().getQuranPageData(pageNumber: currentPageNumber);
     }
 
     // Set the current page data to the last fetched page.
     currentPageData = quranPages[pageIndex];
 
     // Set the player play range for the audio player based on the current page data
-    AudioSettingsCache.setPlayerPlayRange(
-        surahNumber: currentPageData!.surahNumber);
+    AudioSettingsCache.setPlayerPlayRange(surahNumber: currentPageData!.surahNumber);
 
     // Notify listeners that the data has been updated.
     update();
@@ -132,23 +285,19 @@ class QuranReadingController extends GetxController {
   /// Parameters:
   /// - navigationDetails: The details for Quran navigation, including the page number,
   ///   verse number, surah number, and whether to highlight the verse.
-  Future<void> initPageData(
-      {QuranNavigationArgumentModel? navigationDetails}) async {
+  Future<void> initPageData({QuranNavigationArgumentModel? navigationDetails}) async {
+    // changePageWithVolumeKeys();
     // If navigationDetails is null, use Get.arguments
     navigationDetails ??= Get.arguments;
 
     // Start loading the page data and then scroll to the required page
-    await fetchQuranPageData(
-        pageNumber: navigationDetails!.pageNumber, scrollToPage: true);
+    await fetchQuranPageData(pageNumber: navigationDetails!.pageNumber, scrollToPage: true);
 
     // If highlight verse is requested, then highlight the verse
     if (navigationDetails.highlightVerse) {
-      final targetVerse =
-          quranPages[navigationDetails.pageNumber - 1]!.verses.firstWhere(
-                (element) =>
-                    element.verseNumber == navigationDetails!.verseNumber &&
-                    navigationDetails.surahNumber == element.surahNumber,
-              );
+      final targetVerse = quranPages[navigationDetails.pageNumber - 1]!.verses.firstWhere(
+            (element) => element.verseNumber == navigationDetails!.verseNumber && navigationDetails.surahNumber == element.surahNumber,
+          );
       QuranUtils.highlightVerse(isHighlighted: targetVerse.isHighlighted);
     }
 
@@ -161,7 +310,29 @@ class QuranReadingController extends GetxController {
     super.onInit();
     initDisplaySettings();
     await QuranSettingsCache.setQuranPageHeaderHeight();
-    initPageData();
+    await initPageData();
+    changePageWithVolumeKeys();
+    await getAllQuranPages();
+    lastScrollTime = DateTime.now();
+    ever(isFullScreenMode, (bool isFullScreen) {
+      if (!isFullScreen) {
+        // Trigger toggle fullscreen after 5 seconds if fullscreen mode is off
+        Future.delayed(Duration(seconds: 10), () {
+          if (!isFullScreenMode.value) {
+            // Ensure fullscreen is still off
+            QuranUtils.toggleFullscreen(isFullScreen: isFullScreenMode, force: true);
+            isFullScreenMode.value = true; // Update state
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    quranPageController.dispose();
+    volumeController.removeListener();
   }
 
   /// Initializes the display settings for Quran, such as font size, marker color, and display option.
@@ -180,8 +351,7 @@ class QuranReadingController extends GetxController {
     displaySettings.isAdaptiveView = QuranSettingsCache.isQuranAdaptiveView();
 
     // Fetch Quran isDisplayTwoPage type from the cache and assign it to displaySettings
-    displaySettings.isDisplayTwoPage =
-        QuranSettingsCache.isDisplayTwoPageListen();
+    displaySettings.isDisplayTwoPage = QuranSettingsCache.isDisplayTwoPageListen();
   }
 
   /// Handles the page change event when the user flips to a new page.
@@ -195,11 +365,13 @@ class QuranReadingController extends GetxController {
   int? hizbNumber;
   int? rubElHizbNumber;
   void onPageChanged(BuildContext context, int pageIndex) async {
+    _onPageScrolled();
     // Calculate the corresponding page number based on the index
     var pageNumber = pageIndex + 1;
 
     // Update the current page number
     this.pageNumber = pageNumber;
+    update();
 
     // Fetch Quran page data for the new page number without scrolling to the page
     fetchQuranPageData(pageNumber: pageNumber, scrollToPage: false);
@@ -250,8 +422,7 @@ class QuranReadingController extends GetxController {
   /// initializes the page data for the selected bookmark.
   void handleBookmarkPage() async {
     // Navigate to the QuranBookmarksView and wait for the result
-    var navigationDetails =
-        await Get.to(QuranBookmarksView(), fullscreenDialog: true);
+    var navigationDetails = await Get.to(QuranBookmarksView(), fullscreenDialog: true);
 
     // Check if the result is of type QuranNavigationArgumentModel
     if (navigationDetails is QuranNavigationArgumentModel) {
@@ -265,8 +436,7 @@ class QuranReadingController extends GetxController {
   /// initializes the page data for the selected search result.
   void handleSearchPage() async {
     // Navigate to the QuranSearchView and wait for the result
-    var navigationDetails = await Get.to(() => const QuranSearchView(),
-        fullscreenDialog: true, binding: QuranSearchBinding());
+    var navigationDetails = await Get.to(() => const QuranSearchView(), fullscreenDialog: true, binding: QuranSearchBinding());
 
     // Check if the result is of type QuranNavigationArgumentModel
     if (navigationDetails is QuranNavigationArgumentModel) {
@@ -292,14 +462,11 @@ class QuranReadingController extends GetxController {
     // Check if the current page is not null
     if (currentPage != null) {
       // Clear highlights for the all pages
-      QuranUtils.clearHighlightedVersesAndWords(
-          pages: quranPages.whereType<QuranPageModel>().toList());
+      QuranUtils.clearHighlightedVersesAndWords(pages: quranPages.whereType<QuranPageModel>().toList());
 
       // Set the new word to be highlighted
       final currentVerse = currentPage.verses.firstWhere(
-        (verse) =>
-            verse.verseNumber == verseNumber &&
-            verse.surahNumber == surahNumber,
+        (verse) => verse.verseNumber == verseNumber && verse.surahNumber == surahNumber,
       );
 
       // Check if the word is not already highlighted before setting it
@@ -330,14 +497,11 @@ class QuranReadingController extends GetxController {
     // Check if the current page is not null
     if (currentPage != null) {
       // Clear highlights for the all pages
-      QuranUtils.clearHighlightedVersesAndWords(
-          pages: quranPages.whereType<QuranPageModel>().toList());
+      QuranUtils.clearHighlightedVersesAndWords(pages: quranPages.whereType<QuranPageModel>().toList());
 
       // Set the new word to be highlighted
       final currentVerse = currentPage.verses.firstWhere(
-        (verse) =>
-            verse.verseNumber == verseNumber &&
-            verse.surahNumber == surahNumber,
+        (verse) => verse.verseNumber == verseNumber && verse.surahNumber == surahNumber,
       );
       final wordToHighlight = currentVerse.words[wordIndex];
 
@@ -356,11 +520,11 @@ class QuranReadingController extends GetxController {
     QuranSettingsCache.setLastPage(pageIndex: pageNumber);
 
     // Toggle fullscreen mode using QuranUtils, forcing it to true
-    await QuranUtils.toggleFullscreen(
-        isFullScreen: isFullScreenMode, force: true);
+    await QuranUtils.toggleFullscreen(isFullScreen: isFullScreenMode, force: true);
 
     // clear the user-selected player range
     AudioSettingsCache.setPlayRangeValidState(isValid: false);
+    volumeController.removeListener();
 
     // Return true to indicate the success of the view closure
     return true;
@@ -375,8 +539,7 @@ class QuranReadingController extends GetxController {
           // Handle the 'دعاء ختم القرآن' item.
         },
         'page': () => showGoToPageSheet(currentPage: pageNumber),
-        'surah': () =>
-            showGoToSurahSheet(currentSurah: currentPageData!.surahNumber),
+        'surah': () => showGoToSurahSheet(currentSurah: currentPageData!.surahNumber),
         'juz': () => showGoToJuzSheet(currentJuz: currentPageData!.juzNumber),
         'bookmark': () => handleBookmarkPage(),
         'audio': () => Get.to(

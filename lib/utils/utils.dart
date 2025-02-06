@@ -6,9 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:islamina_app/constants/constants.dart';
-import 'package:jhijri/jHijri.dart';
+import 'package:islamina_app/controllers/prayer_time_controller.dart';
+import 'package:islamina_app/data/cache/prayer_time_cache.dart';
+import 'package:jhijri/_src/_jHijri.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,8 +30,7 @@ class Utils {
 
   static DateTime scheduleDateTime(TimeOfDay time) {
     final now = DateTime.now();
-    DateTime scheduledDateTime =
-        DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    DateTime scheduledDateTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
 
     if (scheduledDateTime.isBefore(now)) {
       // If the scheduled time is in the past, add one day
@@ -54,10 +57,6 @@ class Utils {
         return 'مرة كل أسبوع';
       case RepeatInterval.daily:
         return 'مرة كل يوم';
-      case RepeatInterval.hourly:
-        return 'مرة كل ساعة';
-      case RepeatInterval.everyMinute:
-        return 'مرة كل دقيقة';
       default:
         return 'مرة كل يوم';
     }
@@ -65,7 +64,7 @@ class Utils {
 
   static String getCurrentDate() {
     var now = DateTime.now();
-    var formatter = DateFormat.yMMMd();
+    var formatter = DateFormat('EEEE, MMM d, y'); // Explicit pattern with commas and spaces
 
     return formatter.format(now);
   }
@@ -77,8 +76,37 @@ class Utils {
     // );
   }
 
+  static String getLocalizedHijriDate({String locale = 'en'}) {
+    // Initialize the Hijri calendar
+    HijriCalendar.setLocal(locale);
+    var hijriDate = HijriCalendar.now();
+
+    // Localize month and weekday names
+    Map<String, List<String>> localizedMonths = {
+      'en': ['Muharram', 'Safar', 'Rabi’ al-Awwal', 'Rabi’ al-Thani', 'Jumada al-Awwal', 'Jumada al-Thani', 'Rajab', 'Sha’ban', 'Ramadan', 'Shawwal', 'Dhu al-Qi’dah', 'Dhu al-Hijjah'],
+      'ar': ['محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'],
+    };
+
+    Map<String, List<String>> localizedWeekdays = {
+      'en': ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      'ar': ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+    };
+
+    // Fallback to English if locale is not supported
+    var months = localizedMonths[locale] ?? localizedMonths['en']!;
+    var weekdays = localizedWeekdays[locale] ?? localizedWeekdays['en']!;
+
+    // Get localized values
+    String weekday = weekdays[hijriDate.wkDay!];
+    String month = months[hijriDate.hMonth - 1];
+
+    // Format the localized date
+    return '$weekday, ${hijriDate.hDay} $month ${hijriDate.hYear}';
+  }
+
   static Future<bool> requestLocationPermission() async {
     var status = await Geolocator.requestPermission();
+    Geolocator.getPositionStream();
 
     if (status == LocationPermission.whileInUse) {
       return true;
@@ -116,8 +144,7 @@ class Utils {
     }
 
     // If location is enabled but permission is denied, request permission and handle accordingly
-    if (locationStatus.enabled &&
-        locationStatus.status == LocationPermission.denied) {
+    if (locationStatus.enabled && locationStatus.status == LocationPermission.denied) {
       await Geolocator.requestPermission();
       var updatedStatus = await Utils.checkLocationStatus();
 
@@ -162,6 +189,37 @@ class Utils {
     } else {
       return null;
     }
+  }
+
+  static locationStream() {
+    Geolocator.getPositionStream(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 100000, // Update only when the user moves 1 km or more
+      ),
+    ).listen((Position position) async {
+      final currentLocationPosition = PrayerTimeCache.getCoordinatesFromCache();
+
+      const double locationChangeThreshold = 100000; // in meters
+
+// Check if the location has changed significantly
+      if (currentLocationPosition?.latitude != null) {
+        double distance = Geolocator.distanceBetween(
+          currentLocationPosition!.latitude,
+          currentLocationPosition.longitude,
+          position.latitude,
+          position.longitude,
+        );
+
+        if (distance >= locationChangeThreshold) {
+          // Location has changed significantly
+          Get.find<PrayerTimeController>().updateLocation();
+        }
+      } else {
+        // If currentLocationPosition is null, treat it as a new location
+        Get.find<PrayerTimeController>().updateLocation();
+      }
+    });
   }
 
   // Delete a directory

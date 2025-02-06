@@ -3,7 +3,7 @@
         "identifier": "Abdul_Basit_Mujawwad_128kbps",
         "name": "عبدالباسط عبدالصمد (مجود)",
         "englishName": "Abdul Basit (Mujawwad)",
-        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Abdul_Basit_Mujawwad_128kbps.json"
+        "timingDataUrl" : "https://download.quranicaudio.com/quran/thubaity//002.mp3"
     },
     {
         "identifier": "Abdul_Basit_Murattal_64kbps",
@@ -56,6 +56,12 @@
         "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Husary_64kbps.json"
     },
     {
+        "identifier": "Husary_Mujawwad_64kbps",
+        "name": "محمود خليل الحصري (مجود)",
+        "englishName": "Husary (Mujawwad)",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Husary_Mujawwad_64kbps.json"
+    },
+    {
         "identifier": "Mohammad_al_Tablaway_128kbps",
         "name": " محمد الطبلاوي",
         "englishName": "Mohammad Al Tablaway",
@@ -66,6 +72,112 @@
         "name": "سعود الشريم",
         "englishName": "Saud Shuraim",
         "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Saood_ash-Shuraym_128kbps.json"
-    }
-   
+    },
+        {
+        "identifier": "mahmoud_ali_al_banna_32kbps",
+        "name": "محمود علي البنا",
+        "englishName": "Mahmoud Ali Al Banna",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/mahmoud_ali_al_banna_32kbps.json"
+    },
+   {
+        "identifier": "Yasser_Ad-Dussary_128kbps",
+        "name":  "ياسر الدوسري",
+        "englishName": "Yasser Ad-Dussary",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Yasser_Ad-Dussary_128kbps.json"
+   },
+   {
+        "identifier": "Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net",
+        "name":  "احمد ابن علي العجمي",
+        "englishName": "Ahmed ibn Ali al-Ajamy",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net.json"
+   }
+  , {
+        "identifier": "Maher_AlMuaiqly_64kbps",
+        "name":  "ماهر المعيقلي",
+        "englishName": "Maher AlMuaiqly",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Maher_AlMuaiqly_64kbps.net.json"
+   },
+   {
+        "identifier": "Salah_Al_Budair_128kbps",  
+        "name":  "صلاح البدير",
+        "englishName": "Salah Al Budair",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Salah_Al_Budair_128kbps.net.json"
+   },
+   {
+        "identifier": "Ghamadi_40kbps",
+        "name":  "سعد الغامدي",
+        "englishName": "Ghamadi",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Ghamadi_40kbps.net.json"
+
+   },
+   {
+        "identifier": "Muhammad_Ayyoub_64kbps",
+        "name":  "محمدأيوب",
+        "englishName": "Muhammad Ayyoub",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Muhammad_Ayyoub_64kbps.net.json"
+
+   },
+   {
+        "identifier": "Muhammad_Jibreel_64kbps",
+        "name":  "محمد جريل",
+        "englishName": "Muhammad Jibreel",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Muhammad_Jibreel_64kbps.net.json"
+   },
+   {
+        "identifier": "Salah_Al_Budair_128kbps",
+        "name":  "صلاح البدير",
+        "englishName": "Salah Al Budair",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Salah_Al_Budair_128kbps.net.json"
+   },
+   {
+        "identifier": "khalefa_al_tunaiji_64kbps",
+        "name":  "خليفة الطنيجي",
+        "englishName": "Khalefa Al Tunaiji",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/khalefa_al_tunaiji_64kbps.json"
+   },
+   {
+        "identifier": "Hudhaify_32kbps",
+        "name":  "علي الحذيفي",
+        "englishName": "Hudhaify",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Hudhaify_32kbps.json"
+   },
+   {
+        "identifier": "Abdullah_Basfar_64kbps",
+        "name":  "عبد الله بن علي بصفر",
+        "englishName": "Abdullah Basfar",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Abdullah_Basfar_64kbps.json"
+   },
+   {
+        "identifier": "Hani_Rifai_64kbps",
+        "name":  "هاني الرفاعي",
+        "englishName": "Hani Rifai",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Hani_Rifai_64kbps.json"
+   },
+   {
+        "identifier": "Muhsin_Al_Qasim_192kbps",
+        "name":  "محسن القاسم",
+        "englishName": "Muhsin Al Qasim",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Muhsin_Al_Qasim_192kbps.net.json"
+   },
+   {
+        "identifier": "Salah_Al_Budair_128kbps",
+        "name":  "صلاح البدير",
+        "englishName": "Salah Al Budair",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Salah_Al_Budair_128kbps.net.json"
+   },
+   {
+        "identifier": "Ahmed_Neana_128kbps",
+        "name":  "أحمد نعينع",
+        "englishName": "Ahmed Neana",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Ahmed_Neana_128kbps.net.json"
+   },
+   {
+        "identifier": "English/Sahih_Intnl_Ibrahim_Walk_192kbps",
+        "name":  "Sahih Intnl Ibrahim Walk (English)",
+        "englishName": "English/Sahih Intnl Ibrahim Walk",
+        "timingDataUrl" : "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/English/Sahih_Intnl_Ibrahim_Walk_192kbps.json"
+
+   }
+
+
 ]

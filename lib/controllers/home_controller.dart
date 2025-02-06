@@ -2,8 +2,11 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:islamina_app/controllers/prayer_time_controller.dart';
+import 'package:islamina_app/controllers/quran_reading_controller.dart';
 import 'package:islamina_app/services/notification_service.dart';
+import 'package:islamina_app/services/shared_preferences_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
   late AnimationController animationController;
@@ -14,17 +17,19 @@ class HomeController extends GetxController {
   }
 
   @override
-  void onReady() {
+  void onReady() async {
     super.onReady();
-    NotificationService().checkAndRequestNotificationPermission();
-    _updateLocation();
+    final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
+    updateLocation();
+    print(prefs.containsKey('onboarding'));
+    if (prefs.containsKey('onboarding')) {
+      NotificationService().checkAndRequestNotificationPermission();
+    }
   }
 
-  _updateLocation() {
+  updateLocation() {
     final controller = Get.find<PrayerTimeController>();
-    controller.repository.coordinates == null
-        ? controller.updateLocation()
-        : null;
+    controller.repository.coordinates == null ? controller.updateLocation() : null;
     controller.update();
   }
 
@@ -33,17 +38,21 @@ class HomeController extends GetxController {
   String _latestVersion = 'Unknown';
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     _checkForUpdates();
-    // NotificationService().initializeNotifications();
+     final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
+    if (prefs.containsKey('onboarding')) {
+      NotificationService().checkAndRequestNotificationPermission();
+    }
+    NotificationService().initializeNotifications();
   }
 
   Future<void> _checkForUpdates() async {
     await _fetchRemoteConfig();
     await _getCurrentVersion();
     if (_latestVersion != _currentVersion) {
-      _showUpdateDialog();
+      // _showUpdateDialog();
     }
   }
 
@@ -62,8 +71,7 @@ class HomeController extends GetxController {
       AlertDialog(
         title: const Text('تحديث جديد'),
         // content: Text('A new version ($_latestVersion) is available. Please update the app.'),
-        content:
-            Text('يتوفر إصدار جديد ($_latestVersion). يرجى تحديث التطبيق.'),
+        content: Text('يتوفر إصدار جديد ($_latestVersion). يرجى تحديث التطبيق.'),
         actions: <Widget>[
           TextButton(
             child: const Text('تحديث'),

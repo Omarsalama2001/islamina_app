@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:islamina_app/utils/extension.dart';
 
 class SurahVerseWidget extends StatelessWidget {
@@ -36,6 +38,8 @@ class SurahVerseWidget extends StatelessWidget {
                 //   "$surah:$verse",
                 // ),
                 "$surah:$verse",
+                
+                
                 style: const TextStyle(fontSize: 20),
               ),
             ),
@@ -44,10 +48,11 @@ class SurahVerseWidget extends StatelessWidget {
         if (showSurahName) ...{
           const Gap(5),
           Text(
-            surah.getSurahNameOnlyArabicSimple,
+            BlocProvider.of<ThemeCubit>(context).locale.languageCode=='ar'?
+            surah.getSurahNameOnlyArabicSimple:surah.getSurahNameEnglish,
             style: const TextStyle(fontSize: 20),
           ),
-          const SizedBox(width: 3),
+        
         }
       ],
     );

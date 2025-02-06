@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:islamina_app/constants/constants.dart';
 import 'package:islamina_app/controllers/azkar_details_controller.dart';
 import 'package:islamina_app/controllers/azkar_settings_controller.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ZkrWidget extends StatelessWidget {
@@ -245,8 +246,7 @@ class TextIconButton extends StatelessWidget {
   final String text;
   final Function() onTap;
   final Color? color;
-  const TextIconButton(this.icon, this.text, this.onTap,
-      {super.key, this.color});
+  const TextIconButton(this.icon, this.text, this.onTap, {super.key, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +263,7 @@ class TextIconButton extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              text,
+              context.translate(text),
               style: Theme.of(Get.context!).textTheme.bodyLarge,
             ),
           ],
@@ -303,7 +303,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var sharetext = '$description\n التكرار: $count';
+    var sharetext = description;
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -352,7 +352,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                     const Spacer(),
                     TextIconButton(
                       FluentIcons.copy_16_regular,
-                      'نسخ',
+                      'copy',
                       () async {
                         await Clipboard.setData(
                           ClipboardData(text: '$sharetext\n$islaminaLink'),
@@ -368,7 +368,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                     const Spacer(),
                     TextIconButton(
                       FluentIcons.share_16_regular,
-                      'مشاركة',
+                      'share',
                       () async {
                         await Share.share('$sharetext\n$islaminaLink');
                       },
@@ -382,7 +382,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                     const Spacer(),
                     TextIconButton(
                       Icons.refresh_rounded,
-                      'إعادة',
+                      're',
                       onResetButtonPressed,
                       color: Colors.green,
                     ),
@@ -394,7 +394,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                     const Spacer(),
                     TextIconButton(
                       FluentIcons.text_font_size_16_regular,
-                      'حجم الخط',
+                      'fontSize',
                       () => _updateFontSize(context),
                       color: theme.primaryColor,
                     ),
@@ -412,7 +412,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                   Column(
                     children: [
                       Text(
-                        'عدد مرات الذكر',
+                     context.translate(   'numOfzekr'),
                         style: theme.textTheme.bodyLarge,
                       ),
                       const Gap(10),
@@ -506,8 +506,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                                   Text(
                                     // counter.toString(),
                                     controller.counter.toString(),
-                                    style:
-                                        theme.textTheme.headlineSmall?.copyWith(
+                                    style: theme.textTheme.headlineSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -515,8 +514,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                                     width: 85,
                                     height: 85,
                                     child: Obx(() {
-                                      final controller =
-                                          Get.find<AzkarDetailsController>();
+                                      final controller = Get.find<AzkarDetailsController>();
                                       return CircularProgressIndicator(
                                         value: controller.counterPrgress.value,
                                         strokeWidth: 10,
@@ -590,7 +588,7 @@ class _ZkrWidget extends GetView<AzkarDetailsController> {
                   Column(
                     children: [
                       Text(
-                        'إجمالي الأذكار',
+                        context.translate("totalNumOfzekr"),
                         style: theme.textTheme.bodyLarge,
                       ),
                       const Gap(10),

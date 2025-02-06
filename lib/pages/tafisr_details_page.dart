@@ -2,6 +2,8 @@ import 'package:expandable/expandable.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/controllers/quran_reading_controller.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:quran/quran.dart';
 
 import '../../../../../data/models/tafsir_data.dart';
@@ -54,7 +56,7 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
             surah: controller.surahNumber.value,
             verse: controller.verseNumber.value,
           ),
-          Text(' -  الآية ${controller.verseNumber.value}'),
+          Text(' -  ${Get.context!.translate('ayah')} ${controller.verseNumber.value}'),
         ],
       );
     });
@@ -107,20 +109,20 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
   // Build the list of Tafsirs
   Widget buildTafsirsList() {
     return Obx(() {
-      return controller.tafsirsUrls.isNotEmpty && controller.tafsirsData.isEmpty
-          ? const Center(
+        return controller.tafsirsUrls.isNotEmpty && controller.tafsirsData.isEmpty
+          ?  Center(
               child: Padding(
                 padding: EdgeInsets.all(25.0),
                 child: Text(
-                  'جاري التحميل...',
+                  Get.context!.translate('loading'),
                   textAlign: TextAlign.center,
                 ),
               ),
             )
           : controller.tafsirsData.isEmpty
-              ? const Center(
+              ?  Center(
                   child: Text(
-                    'لم يتم تحميل اي تفسير!\n إضغط على الزر في الأعلى لتحميل تفسير',
+                    Get.context!.translate('noTafsirLoaded'),
                     textAlign: TextAlign.center,
                   ),
                 )
@@ -145,7 +147,7 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
         ExpandablePanel(
           controller: ExpandableController(initialExpanded: true),
           header: Text(
-            tafsirData.edition.name,
+            "تفسير الميسر",
             style: Theme.of(context)
                 .textTheme
                 .labelLarge!
@@ -175,7 +177,12 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
         Obx(
           () {
             return Text(tafsirData.tafsirLists[controller.surahNumber.value - 1]
-                [controller.verseNumber.value - 1]);
+                [controller.verseNumber.value - 1]
+                ,
+                style: TextStyle(
+                  fontSize: Get.find<QuranReadingController>().displaySettings.displayFontSize*0.7
+                ),
+                );
           },
         ),
         Row(
@@ -208,14 +215,14 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
             controller.goToPreviousAyah();
           },
           icon: const Icon(FluentIcons.arrow_step_over_20_regular),
-          label: const Text('السابق'),
+          label:  Text(Get.context!.translate('previous')),
         ),
         TextButton.icon(
           onPressed: () {
             controller.goToNextAyah();
           },
           icon: const Icon(FluentIcons.arrow_step_back_20_regular),
-          label: const Text('التالي'),
+          label:  Text( Get.context!.translate('next')),
         ),
       ],
     );

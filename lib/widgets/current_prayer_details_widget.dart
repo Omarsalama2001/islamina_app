@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:islamina_app/widgets/arabic_timer_widget.dart';
 
 import '../data/models/prayer_time_model.dart';
@@ -21,18 +24,11 @@ class CurrentPrayerDetailsWidget extends StatelessWidget {
         ? Row(
             children: [
               Expanded(
-                child: _buildPrayerTimeNextAndCurrent(
-                    title: 'الصلاة الآن',
-                    prayer: repository.getCurrentPrayer(),
-                    theme: Theme.of(context)),
+                child: _buildPrayerTimeNextAndCurrent(title: context.translate('prayerNow'), prayer: repository.getCurrentPrayer(), theme: Theme.of(context)),
               ),
               const Gap(15),
               Expanded(
-                child: _buildPrayerTimeNextAndCurrent(
-                    title: 'الصلاة القادمة',
-                    prayer: repository.getNextPrayer(),
-                    isTimer: true,
-                    theme: Theme.of(context)),
+                child: _buildPrayerTimeNextAndCurrent(title: context.translate('prayerNext'), prayer: repository.getNextPrayer(), isTimer: true, theme: Theme.of(context)),
               )
             ],
           )
@@ -61,7 +57,7 @@ class CurrentPrayerDetailsWidget extends StatelessWidget {
             ),
             const Gap(5),
             Text(
-              prayer.name,
+              BlocProvider.of<ThemeCubit>(Get.context!).locale.languageCode == 'ar' ? prayer.name : prayer.englishName,
               style: theme.textTheme.titleMedium!.copyWith(
                 color: theme.primaryColor,
                 fontWeight: FontWeight.bold,

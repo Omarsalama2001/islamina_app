@@ -32,6 +32,21 @@ class AzkarSettingsCache {
   static void setShowNotificationForFastingMonAndThu(bool showNotification) {
     prefs.setBool(fastingMonAndThuKey, showNotification);
   }
+  static void setShowNotificationForMidnight(bool showNotification) {
+    prefs.setBool('midNight', showNotification);
+  }
+  
+
+  static bool getShowNotificationForMidnight() {
+   return prefs.getBool('midNight') ?? false;
+  }
+   static void setShowNotificationForThird(bool showNotification) {
+    prefs.setBool('third', showNotification);
+  }
+  static bool getShowNotificationForThird() {
+   return prefs.getBool('third') ?? false;
+  }
+
 
   static void setMorningTime(TimeOfDay morningTime) {
     prefs.setString(morningTimeKey, _timeOfDayToString(morningTime));
@@ -83,13 +98,13 @@ class AzkarSettingsCache {
   static TimeOfDay getNightTime() {
     final timeAsString = prefs.getString(nightTimeKey);
     return _stringToTimeOfDay(timeAsString) ??
-        const TimeOfDay(hour: 20, minute: 0);
+        const TimeOfDay(hour: 17, minute: 0);
   }
 
   static TimeOfDay getSleepTime() {
     final timeAsString = prefs.getString(sleepTimeKey);
     return _stringToTimeOfDay(timeAsString) ??
-        const TimeOfDay(hour: 23, minute: 0);
+        const TimeOfDay(hour: 21, minute: 0);
   }
 
   static TimeOfDay getDohaPrayerTime() {

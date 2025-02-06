@@ -5,20 +5,25 @@ import 'package:islamina_app/services/database_service.dart';
 // Repository class for ElectronicTasbih
 class ElectronicTasbihRepository {
   // Database service instance
-  final DatabaseService _databaseService = DatabaseService('e_tasbih.db');
+  final DatabaseService _databaseService = DatabaseService('tasbih.db');
 
   // Table name for ElectronicTasbih
-  static const String _tableName = 'e_tasbih';
+  static const String _tableName = 'tasbih';
 
   // Delete ElectronicTasbih by ID
   Future<void> deleteTasbih({required int id}) async {
     _databaseService.deleteData(tableName: _tableName, id: id);
   }
 
+  Future<void> deleteAllTasbih() async {
+    _databaseService.deleteAllData(tableName: _tableName);
+  }
+
   // Update ElectronicTasbih
   Future<void> updateTasbih({
     required ElectronicTasbihModel electronicTasbihModel,
   }) async {
+    print(electronicTasbihModel.toJson());
     await _databaseService.updateData(
       table: _tableName,
       values: electronicTasbihModel.toJson(),
@@ -30,8 +35,7 @@ class ElectronicTasbihRepository {
   }
 
 // Update Counter ElectronicTasbih
-  Future<void> updateCounters(
-      {required ElectronicTasbihModel eTasbihModel}) async {
+  Future<void> updateCounters({required ElectronicTasbihModel eTasbihModel}) async {
     await _databaseService.updateData(
       table: _tableName,
       values: {
@@ -72,8 +76,7 @@ class ElectronicTasbihRepository {
   // Get all ElectronicTasbih
   Future<List<ElectronicTasbihModel>> getAllTasbih() async {
     // Read data from the database
-    List<Map<String, dynamic>> maps =
-        await _databaseService.readData(tableName: _tableName);
+    List<Map<String, dynamic>> maps = await _databaseService.readData(tableName: _tableName);
 
     // Map data to list of ElectronicTasbihModel
     return maps.map((e) => ElectronicTasbihModel.fromJson(e)).toList();

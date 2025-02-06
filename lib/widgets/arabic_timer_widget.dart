@@ -2,6 +2,12 @@ import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:islamina_app/HomeWidgetData.dart';
+import 'package:islamina_app/data/repository/prayer_time_repository.dart';
+
+import '../utils/utils.dart';
 
 class ArabicTimerWidget extends StatefulWidget {
   final DateTime targetDate;
@@ -22,6 +28,7 @@ class ArabicTimerWidget extends StatefulWidget {
 class ArabicTimerWidgetState extends State<ArabicTimerWidget> {
   late Duration _remainingTime;
   late String formattedTime;
+  final prayerRepository = Get.find<PrayerTimeRepository>();
   @override
   void initState() {
     super.initState();
@@ -38,6 +45,8 @@ class ArabicTimerWidgetState extends State<ArabicTimerWidget> {
         setState(() {
           _remainingTime = widget.targetDate.difference(DateTime.now());
           formattedTime = formatDuration(_remainingTime);
+                // updatePrayerTimesWidget(prayerRepository.getPrayers(),prayerRepository.getNextPrayer(),prayerRepository.getCurrentPrayer(),Utils.getCurrentDateHijri());
+
         });
 
         // Check if the timer has reached zero

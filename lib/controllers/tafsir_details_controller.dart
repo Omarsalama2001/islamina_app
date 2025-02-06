@@ -13,34 +13,31 @@ class TafsirDetailsController extends GetxController {
   RxInt verseNumber = RxInt(Get.arguments['verseNumber']);
   RxList<FileSystemEntity> tafsirsUrls = RxList<FileSystemEntity>();
   RxList<TafsirData> tafsirsData = RxList<TafsirData>();
+  
   RxBool isDataLoaded = RxBool(false);
 
   Future<void> loadTafsirDate() async {
     tafsirsUrls.clear();
     tafsirsData.clear();
     final appDocumentsDirectory = await getApplicationDocumentsDirectory();
-    final downloadPath =
-        '${appDocumentsDirectory.path}/downloaded_content/tafsirs';
+    final downloadPath = '${appDocumentsDirectory.path}/downloaded_content/tafsirs';
 
     try {
-      tafsirsUrls.value = Directory("$downloadPath/")
-          .listSync()
-          .where((element) => element.path.endsWith(".json"))
-          .toList();
-
-      await Future.wait(
-          tafsirsUrls.map((element) => loadTafsirDataFromFile(element)));
+      tafsirsUrls.value = Directory("$downloadPath/").listSync().where((element) => element.path.endsWith(".json")).toList();
+      await Future.wait(tafsirsUrls.map((element) => loadTafsirDataFromFile(element)));
     } catch (e) {
       log(e.toString());
     }
   }
 
-  Future<void> loadTafsirDataFromFile(FileSystemEntity tafsirFile) async {
+  Future<void> loadTafsirDataFromFile(FileSystemEntity tafsirFile ) async {
     final file = File(tafsirFile.path);
 
     try {
       final jsonString = await file.readAsString();
+      // print( json.decode(jsonString)['quran']['ar.muyassar']['1'] );
       tafsirsData.add(TafsirData.fromJson(json.decode(jsonString)));
+     
     } catch (e) {
       log(e.toString());
     }
@@ -48,8 +45,7 @@ class TafsirDetailsController extends GetxController {
 
   void goToNextAyah() {
     if (tafsirsData.isNotEmpty) {
-      if (verseNumber.value <
-          tafsirsData.first.tafsirLists[surahNumber.value - 1].length) {
+      if (verseNumber.value < tafsirsData.first.tafsirLists[surahNumber.value - 1].length) {
         // If there's a next Ayah in the current Surah, go to it.
         verseNumber.value++;
       } else if (surahNumber.value < tafsirsData.first.tafsirLists.length) {
@@ -61,15 +57,11 @@ class TafsirDetailsController extends GetxController {
   }
 
   void copyTafsir(TafsirData tafsirData) async {
-    Utils.copyToClipboard(
-        text:
-            "${getSurahNameArabic(surahNumber.value)} - تفسير الآية ${verseNumber.value} \n${tafsirData.tafsirLists[surahNumber.value - 1][verseNumber.value - 1]} \n ${tafsirData.edition.name}");
+    Utils.copyToClipboard(text: "${getSurahNameArabic(surahNumber.value)} - تفسير الآية ${verseNumber.value} \n${tafsirData.tafsirLists[surahNumber.value - 1][verseNumber.value - 1]} \n ");
   }
 
   void shareTafsir(TafsirData tafsirData) async {
-    Utils.shareText(
-        text:
-            "${getSurahNameArabic(surahNumber.value)} - تفسير الآية ${verseNumber.value} \n${tafsirData.tafsirLists[surahNumber.value - 1][verseNumber.value - 1]} \n ${tafsirData.edition.name}");
+    Utils.shareText(text: "${getSurahNameArabic(surahNumber.value)} - تفسير الآية ${verseNumber.value} \n${tafsirData.tafsirLists[surahNumber.value - 1][verseNumber.value - 1]} \n ");
   }
 
   void goToPreviousAyah() {
@@ -80,8 +72,7 @@ class TafsirDetailsController extends GetxController {
       } else if (surahNumber.value > 1) {
         // If there's a previous Surah, go to its last Ayah.
         surahNumber.value--;
-        verseNumber.value =
-            tafsirsData.first.tafsirLists[surahNumber.value - 1].length;
+        verseNumber.value = tafsirsData.first.tafsirLists[surahNumber.value - 1].length;
       }
     }
   }

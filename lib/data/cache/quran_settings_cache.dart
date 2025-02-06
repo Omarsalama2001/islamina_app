@@ -1,3 +1,5 @@
+import 'package:islamina_app/main.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:islamina_app/utils/quran_utils.dart';
 import '../../constants/cache_keys.dart';
@@ -5,8 +7,7 @@ import '../../services/shared_preferences_service.dart';
 
 // A class for managing and caching Quran display settings using GetStorage.
 class QuranSettingsCache {
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
 
   // Set the last page index in the cache.
   static void setLastPage({required int pageIndex}) {
@@ -104,6 +105,6 @@ class QuranSettingsCache {
   }
 
   static double getStatusBarHeight() {
-    return prefs.getDouble(headerHeightKey)!;
+    return prefs.getDouble(headerHeightKey) ?? 10.0.h;
   }
 }

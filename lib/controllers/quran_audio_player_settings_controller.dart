@@ -60,7 +60,7 @@ class QuranAudioSettingsController extends GetxController {
     playRange = QuranPlayRangeModel();
     playRange = AudioSettingsCache.getQuranPlayRange();
     initSettings();
-    currentPageData = Get.arguments!;
+    // currentPageData = Get.arguments!; // Get the current page data
 
     update();
   }

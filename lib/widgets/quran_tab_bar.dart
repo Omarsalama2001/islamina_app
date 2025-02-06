@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 
 class QuranTabBar extends StatelessWidget {
   const QuranTabBar(
@@ -14,15 +15,15 @@ class QuranTabBar extends StatelessWidget {
         topLeft: Radius.circular(20),
         topRight: Radius.circular(20),
       ),
-      tabs: const [
+      tabs:  [
         Tab(
-          text: "السّور",
+          text:context.translate('noOfTheSurah') ,
         ),
         Tab(
-          text: "الأجزاء",
+          text: context.translate('noOfTheJuz') ,
         ),
         Tab(
-          text: "الأحزاب",
+          text: context.translate('noOfTheHizb') ,
         ),
       ],
     );

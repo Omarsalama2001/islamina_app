@@ -3,6 +3,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:islamina_app/HomeWidgetData.dart';
 import 'package:islamina_app/data/cache/app_settings_cache.dart';
 import 'package:islamina_app/data/cache/prayer_time_cache.dart';
 import 'package:islamina_app/services/notification_service.dart';
@@ -14,6 +15,7 @@ import '../models/prayer_time_model.dart';
 class PrayerTimeRepository extends GetxService {
   PrayerTimes? prayerTimes;
   Coordinates? coordinates;
+  List<int>? changeTimes;
   late CalculationParameters parameters;
   late Madhab madhab;
 
@@ -27,6 +29,8 @@ class PrayerTimeRepository extends GetxService {
   /// Initialize prayer times and related data.
   Future<void> initPrayerTimes() async {
     coordinates = PrayerTimeCache.getCoordinatesFromCache();
+    changeTimes = await PrayerTimeCache.getChangeValues();
+
     if (coordinates == null && await Permission.location.isGranted) {
       coordinates = await getCoordinatesFromLocation();
     }
@@ -34,8 +38,20 @@ class PrayerTimeRepository extends GetxService {
       parameters = PrayerTimeCache.getCalculationMethodFromCache().getParameters();
       madhab = PrayerTimeCache.getMadhabFromCache();
       parameters.madhab = madhab;
-      prayerTimes = PrayerTimes.today(coordinates!, parameters);
+      parameters.adjustments.fajr = changeTimes![0];
+      parameters.adjustments.sunrise = changeTimes![1];
+      parameters.adjustments.dhuhr = changeTimes![2];
+      parameters.adjustments.asr = changeTimes![3];
+      parameters.adjustments.maghrib = changeTimes![4];
+      parameters.adjustments.isha = changeTimes![5];
+   
+      prayerTimes = PrayerTimes.today(
+        coordinates!,
+        parameters,
+      );
     }
+    updatePrayerTimesWidget(getPrayers(), getNextPrayer(), getCurrentPrayer(), Utils.getCurrentDateHijri(), Utils.getCurrentDate());
+    updatePrayerTimesWidget2(getPrayers(), getNextPrayer(), getCurrentPrayer());
   }
 
   /// Get the Arabic name of a prayer.
@@ -75,10 +91,20 @@ class PrayerTimeRepository extends GetxService {
     }
   }
 
+  Future<void> showSecondJomaaPrayerNotification() async {
+    var duhrPrayer = Get.find<PrayerTimeRepository>().getPrayers()[2];
+    // Get the next prayer time
+
+    await Get.find<NotificationService>().showPrayerNotification(
+      duhrPrayer,
+    );
+  }
+
   /// Schedule notification for the iqamah prayer time.
   Future<void> showIqamahPrayerNotification() async {
     // Get the next prayer time
     var currentPrayer = getCurrentPrayer();
+
     // currentPrayer.fulldate = currentPrayer.fulldate.add(const Duration(minutes: 15));
     currentPrayer = currentPrayer.copyWith(
       fulldate: currentPrayer.fulldate.add(const Duration(minutes: 15)),
@@ -95,8 +121,9 @@ class PrayerTimeRepository extends GetxService {
   /// Schedule notification for the before prayer time.
   Future<void> showBeforePrayerNotification() async {
     // Get the next prayer time
-    var currentPrayer = getCurrentPrayer();
+    var currentPrayer = getNextPrayer();
     // currentPrayer.fulldate = currentPrayer.fulldate.add(const Duration(minutes: 15));
+
     currentPrayer = currentPrayer.copyWith(
       fulldate: currentPrayer.fulldate.subtract(const Duration(minutes: 15)),
     );
@@ -130,6 +157,7 @@ class PrayerTimeRepository extends GetxService {
     var isNotificationEnabled = PrayerTimeCache.getPrayerNotificationMode(prayer: prayer);
     // Create and return the PrayerTimeModel
     return PrayerTimeModel(
+      englishName: prayer.name.capitalize!,
       name: getPrayerNameArabic(prayer: prayer),
       time: formattedTime,
       type: prayer,
@@ -154,6 +182,24 @@ class PrayerTimeRepository extends GetxService {
     return currentPrayerTime;
   }
 
+  int additionTimeChangeToPrayerTimes(Prayer prayer) {
+    if (prayer == Prayer.fajr) {
+      return changeTimes![0];
+    } else if (prayer == Prayer.sunrise) {
+      return changeTimes![1];
+    } else if (prayer == Prayer.dhuhr) {
+      return changeTimes![2];
+    } else if (prayer == Prayer.asr) {
+      return changeTimes![3];
+    } else if (prayer == Prayer.maghrib) {
+      return changeTimes![4];
+    } else if (prayer == Prayer.isha) {
+      return changeTimes![5];
+    } else {
+      return 0;
+    }
+  }
+
 // Format the prayer time as a string
   String _formatPrayerTime(DateTime prayerTime) {
     String time = DateFormat.jm().format(prayerTime);
@@ -170,9 +216,38 @@ class PrayerTimeRepository extends GetxService {
     return _isAM(prayerTime) ? 'ص' : 'م';
   }
 
+  Prayer getAfterNextPrayer(Prayer nextPrayer) {
+    // ترتيب الصلوات
+    List<Prayer> prayerOrder = [Prayer.fajr, Prayer.sunrise, Prayer.dhuhr, Prayer.asr, Prayer.maghrib, Prayer.isha];
+
+    // إيجاد فهرس الصلاة القادمة
+    int nextPrayerIndex = prayerOrder.indexOf(nextPrayer);
+
+    // الحصول على فهرس الصلاة التي تلي القادمة
+    int afterNextPrayerIndex = (nextPrayerIndex + 1) % prayerOrder.length;
+
+    // إرجاع نوع الصلاة التي تلي القادمة
+    return prayerOrder[afterNextPrayerIndex];
+  }
+
+  Prayer getAfterAfterNextPrayer(Prayer nextPrayer) {
+    // ترتيب الصلوات
+    List<Prayer> prayerOrder = [Prayer.fajr, Prayer.sunrise, Prayer.dhuhr, Prayer.asr, Prayer.maghrib, Prayer.isha];
+
+    // إيجاد فهرس الصلاة القادمة
+    int nextPrayerIndex = prayerOrder.indexOf(nextPrayer);
+
+    // الحصول على فهرس الصلاة التي تلي القادمة
+    int afterNextPrayerIndex = (nextPrayerIndex + 2) % prayerOrder.length;
+
+    // إرجاع نوع الصلاة التي تلي القادمة
+    return prayerOrder[afterNextPrayerIndex];
+  }
+
   /// Get the next prayer time as a [PrayerTimeModel].
   PrayerTimeModel getNextPrayer() {
     prayerTimes = PrayerTimes.today(coordinates!, parameters);
+
     var nextPrayer = prayerTimes!.nextPrayer();
     var isNonePrayer = nextPrayer == Prayer.none;
     if (nextPrayer == Prayer.none) {
@@ -231,16 +306,16 @@ class PrayerTimeRepository extends GetxService {
   }
 
   // get timres by specific date
-  List getPrayerTimesByDate(DateTime date) {
-    final dateComponents = DateComponents(date.year, date.month, date.day);
-    PrayerTimes prayerTimes = PrayerTimes(coordinates!, dateComponents, parameters);
+  List<String> getPrayerTimesByDate(
+    DateTime date,
+  ) {
     return [
-      convertToArabicTime(prayerTimes.fajr.toString()),
-      convertToArabicTime(prayerTimes.sunrise.toString()),
-      convertToArabicTime(prayerTimes.dhuhr.toString()),
-      convertToArabicTime(prayerTimes.asr.toString()),
-      convertToArabicTime(prayerTimes.maghrib.toString()),
-      convertToArabicTime(prayerTimes.isha.toString()),
+      convertToArabicTime(prayerTimes!.fajr.toString()),
+      convertToArabicTime(prayerTimes!.sunrise.toString()),
+      convertToArabicTime(prayerTimes!.dhuhr.toString()),
+      convertToArabicTime(prayerTimes!.asr.toString()),
+      convertToArabicTime(prayerTimes!.maghrib.toString()),
+      convertToArabicTime(prayerTimes!.isha.toString()),
     ];
   }
 
@@ -273,15 +348,14 @@ class PrayerTimeRepository extends GetxService {
       String locale = AppSettingsCache.getLanguage();
       // await setLocaleIdentifier('ar-SA');
       await setLocaleIdentifier(locale);
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(coordinates!.latitude, coordinates!.longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(coordinates!.latitude, coordinates!.longitude);
       if (placemarks.isNotEmpty) {
         if (placemarks.length > 2) {
           // return placemarks[3].street!;
-          return '${placemarks[3].country!}, ${placemarks[3].locality!}, ${placemarks[3].street!}';
+          return '${placemarks[3].country!}, ${placemarks[3].locality!}';
         }
         // return placemarks[0].street!;
-        return '${placemarks[0].country!}, ${placemarks[0].locality!}, ${placemarks[0].street!}';
+        return '${placemarks[0].country!}, ${placemarks[0].locality!}';
       } else {
         return getLocationTextCoded();
       }

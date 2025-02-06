@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:islamina_app/controllers/e_tasbih_controller.dart';
-import 'package:islamina_app/pages/e_tasbih_counter_page.dart';
+import 'package:islamina_app/features/sebha/pages/sebha_page.dart';
 
 import '../widgets/e_tasbih_widget.dart';
 
@@ -37,7 +37,7 @@ class ElectronicTashbihPage extends GetView<ElectronicTasbihController> {
                     totalCounter: tasbih.totalCounter.value,
                     onTap: () {
                       Get.to(() =>
-                          ElectronicTashbihCounterPage(eTasbihModel: tasbih));
+                          SebhaPage());
                     },
                     onDeletePressed: () => controller.deleteTasbih(tasbih.id!),
                     onEditPressed: () => controller.editTasbih(tasbih),

@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar(
@@ -20,7 +21,7 @@ class CustomSearchBar extends StatelessWidget {
           FluentIcons.search_24_filled,
         ),
         hintStyle: const TextStyle(fontSize: 14),
-        hintText: hintText,
+        hintText: context.translate(hintText),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none),

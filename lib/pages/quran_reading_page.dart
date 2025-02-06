@@ -1,9 +1,25 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:islamina_app/controllers/quran_audio_player_controller.dart';
 import 'package:islamina_app/controllers/quran_settings_controller.dart';
+import 'package:islamina_app/core/extensions/media_query_extension.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/data/models/quran_navigation_data_model.dart';
+import 'package:islamina_app/features/khatma/data/models/khatma_model.dart';
+import 'package:islamina_app/features/khatma/presentation/blocs/cubit/khatma_cubit.dart';
+import 'package:islamina_app/services/services.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:quran/quran.dart';
 import 'package:islamina_app/constants/constants.dart';
 import 'package:islamina_app/data/cache/quran_settings_cache.dart';
@@ -12,6 +28,8 @@ import 'package:islamina_app/utils/quran_utils.dart';
 import 'package:islamina_app/utils/sheets/sheet_methods.dart';
 import 'package:islamina_app/widgets/custom_pop_menu_item.dart';
 import 'package:islamina_app/widgets/custom_scroll_behavior.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../data/models/quran_page.dart';
 import '../../../../routes/app_pages.dart';
 import 'package:iconsax/iconsax.dart';
@@ -21,21 +39,22 @@ import '../widgets/quran_reading_page_widgets.dart';
 import 'quran_audio_player_page.dart';
 
 class QuranReadingPage extends GetView<QuranReadingController> {
-  const QuranReadingPage({super.key});
+  QuranReadingPage({super.key});
   @override
   Widget build(BuildContext context) {
+    final QuranNavigationArgumentModel arguments = Get.arguments as QuranNavigationArgumentModel;
+
+    var controller = Get.put(QuranReadingController());
+    //  Future.delayed( Duration(seconds: 4)).then((context) => QuranUtils.toggleFullscreen(isFullScreen: controller.isFullScreenMode),);
+    controller.changePageWithVolumeKeys();
+
     var theme = Theme.of(context);
     return GetBuilder(
         init: QuranReadingController(),
         builder: (quranController) {
+          arguments.khatmaModel != null ? controller.getKhatmaStatus(arguments.khatmaModel!) : null;
           return Scaffold(
-            backgroundColor:
-                quranController.selectedBackgroundColorIndex == 0 ||
-                        quranController.selectedBackgroundColorIndex == 1 ||
-                        quranController.selectedBackgroundColorIndex == 2
-                    ? quranController.backgroundColors[
-                        quranController.selectedBackgroundColorIndex]
-                    : null,
+            backgroundColor: quranController.selectedBackgroundColorIndex == 0 || quranController.selectedBackgroundColorIndex == 1 || quranController.selectedBackgroundColorIndex == 2 ? quranController.backgroundColors[quranController.selectedBackgroundColorIndex] : null,
             resizeToAvoidBottomInset: false,
             bottomNavigationBar: buildQuranAudioPlayer(),
             extendBody: true,
@@ -45,55 +64,224 @@ class QuranReadingPage extends GetView<QuranReadingController> {
             body: PopScope(
               onPopInvoked: (_) async => await controller.onCloseView(),
               child: GestureDetector(
-                onTap: () => QuranUtils.toggleFullscreen(
-                    isFullScreen: controller.isFullScreenMode),
+                onTap: () => QuranUtils.toggleFullscreen(isFullScreen: controller.isFullScreenMode),
                 child: GetBuilder<QuranReadingController>(
                   // PageView for handling the 604 Quran Page
-                  builder: (controller) => PageView.builder(
-                    controller: controller.quranPageController,
-                    itemCount: 604,
-                    onPageChanged: (value) {
-                      controller.onPageChanged(context, value);
-                    },
-                    itemBuilder: (context, index) {
-                      // current page data might be null
-                      QuranPageModel? currentPage =
-                          controller.quranPages[index];
-                      QuranPageModel? nextPage;
-                      if (index != 603) {
-                        nextPage = null;
-                        nextPage = controller.quranPages[index + 1];
-                      }
-                      // if null return loading text
-                      if (currentPage == null) {
-                        return const Center(child: Text(loadingText));
-                      }
-                      // return the page data of requseted page
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // if page is odd view page strokes
-                          if (currentPage.pageNumber.isOdd)
-                            buildPageStrokes(false),
-                          // the page view handler
-                          Expanded(
-                              child: QuranPageView(
-                            currentPage,
-                            nextPage: nextPage,
-                          )),
-                          // if page is even view page strokes
-                          if (currentPage.pageNumber.isEven)
-                            buildPageStrokes(true),
-                        ],
-                      );
-                    },
+                  builder: (controller) => Stack(
+                    children: [
+                      PageView.builder(
+                        scrollDirection: Axis.horizontal,
+                        controller: controller.quranPageController,
+                        itemCount: 604,
+                        onPageChanged: (value) {
+                          controller.onPageChanged(context, value);
+                        },
+                        itemBuilder: (context, index) {
+                          // current page data might be null
+                          QuranPageModel? currentPage = controller.quranPages[index];
+                          QuranPageModel? nextPage;
+                          if (index != 603) {
+                            nextPage = null;
+                            nextPage = controller.quranPages[index + 1];
+                          }
+                          // if null return loading text
+                          if (currentPage == null) {
+                            return Center(child: Text(context.translate('loadingText')));
+                          }
+                          // return the page data of requseted page
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // if page is odd view page strokes
+                              if (currentPage.pageNumber.isOdd) buildPageStrokes(false),
+                              // the page view handler
+                              Expanded(
+                                  child: QuranPageView(
+                                currentPage,
+                                nextPage: nextPage,
+                              )),
+                              // if page is even view page strokes
+                              if (currentPage.pageNumber.isEven) buildPageStrokes(true),
+                            ],
+                          );
+                        },
+                      ),
+                      controller.isFullScreenMode.value
+                          ? const SizedBox.shrink()
+                          : arguments.isKhatma
+                              ? Positioned(
+                                  bottom: 10.h,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          showDragHandle: true,
+                                          // barrierColor: Colors.,
+                                          enableDrag: true,
+                                          isDismissible: true,
+                                          useSafeArea: true,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                          elevation: 10,
+                                          backgroundColor: Colors.white,
+                                          context: context,
+                                          builder: (_) => SizedBox(
+                                                height: context.height * 0.6,
+                                                child: ListView.builder(
+                                                  itemBuilder: (context, index) => buildKhatmaSheetItem(context.read<KhatmaCubit>().khatmas[index]),
+                                                  itemCount: context.read<KhatmaCubit>().khatmas.length,
+                                                ),
+                                              ));
+                                    },
+                                    child: GetBuilder<QuranReadingController>(
+                                      init: QuranReadingController(),
+                                      builder: (controller) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(5),
+                                              boxShadow: const [
+                                                BoxShadow(color: Colors.grey, spreadRadius: 1, blurRadius: 7),
+                                              ],
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(7.0),
+                                              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                                GetBuilder<QuranReadingController>(
+                                                    init: QuranReadingController(),
+                                                    builder: (controller) {
+                                                      print(controller.getPageEquaility(arguments.khatmaModel!));
+                                                      return CircularPercentIndicator(
+                                                        radius: 15.sp,
+                                                        percent: (controller.getPageEquaility(arguments.khatmaModel!) <= arguments.khatmaModel!.lastPage) ? (controller.getPageEquaility(arguments.khatmaModel!) / arguments.khatmaModel!.lastPage) : 1,
+                                                        progressColor: controller.khatmaStatus == 'normalRate' ? context.theme.primaryColor : Colors.orange,
+                                                      );
+                                                    }),
+                                                const Gap(7),
+                                                Text(
+                                                  controller.khatmaStatus,
+                                                  style: GoogleFonts.amiri().copyWith(color: Colors.black),
+                                                ),
+                                                const Gap(7),
+                                                const Icon(FluentIcons.chevron_right_20_regular),
+                                              ]),
+                                            )),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                    ],
                   ),
                 ),
               ),
             ),
           );
         });
+  }
+
+  buildKhatmaSheetItem(KhatmaModel khatmaModel) {
+    return GestureDetector(
+      onTap: () {
+        QuranReadingController controller = Get.find();
+        // Start loading the page and then scroll to the page
+        final page = mapInitialPositionToPage(khatmaModel.unit, khatmaModel.initialPage);
+        controller.fetchQuranPageData(pageNumber: page.pageNumber, scrollToPage: true);
+        Get.back();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+              boxShadow: [
+                BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 1),
+              ]),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  CircularPercentIndicator(
+                    header: Text('% ${calculatePercent(khatmaModel)}', style: GoogleFonts.tajawal().copyWith(fontSize: 17.sp)),
+                    center: Container(
+                      height: 27.sp,
+                      width: 27.sp,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(17.sp),
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage(
+                              getKhatmaImage(khatmaModel!.khatmaType).toLowerCase(),
+                            ),
+                          )),
+                    ),
+                    radius: 23.sp,
+                    animation: true,
+                    progressColor: Get.context?.theme.primaryColor,
+                    percent: (khatmaModel.initialPage > khatmaModel.valueOfUnit ? khatmaModel.valueOfUnit : khatmaModel.initialPage) / khatmaModel.valueOfUnit,
+                    animateFromLastPercent: true,
+                    circularStrokeCap: CircularStrokeCap.round,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.sp),
+                      boxShadow: [
+                        BoxShadow(color: Get.context!.theme.primaryColorLight.withOpacity(0.5), spreadRadius: 1, blurRadius: 10),
+                      ],
+                      color: const Color(0xffb8e2ce),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        Get.context!.translate(khatmaModel.khatmaType),
+                        style: GoogleFonts.tajawal(fontWeight: FontWeight.w700).copyWith(color: Get.context!.theme.primaryColor, fontSize: 17.sp),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      khatmaModel!.name,
+                      style: GoogleFonts.tajawal(fontWeight: FontWeight.w700).copyWith(color: Get.context!.theme.primaryColor, fontSize: 15.sp),
+                    ),
+                    Text(
+                      '${Get.context!.translate("khamta_ends_after")} ${calculateExpirationTimeOfKhatma(khatmaModel.createdAt, khatmaModel.expectedPeriodOfKhatma)}${Get.context!.translate("day")} - ${khatmaModel.unitPerDay} ${Get.context!.translate(khatmaModel.unit)} ${Get.context!.translate("daily")}',
+                      style: GoogleFonts.tajawal(fontWeight: FontWeight.w700).copyWith(color: Get.context!.theme.primaryColor, fontSize: 15.sp),
+                    ),
+                    const Gap(7),
+                    Text(
+                      khatmaModel.moshafType ? Get.context!.translate("app'sMoshaf") : Get.context!.translate("ownMoshaf"),
+                      style: GoogleFonts.tajawal(fontWeight: FontWeight.w700).copyWith(color: Colors.orange, fontSize: 15.sp),
+                    ),
+                    // Text(
+                    //   controller.khatmaStatus,
+                    //   style: GoogleFonts.amiri().copyWith(color: Colors.black),
+                    // ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   // build the appbar
@@ -126,7 +314,7 @@ class QuranReadingPage extends GetView<QuranReadingController> {
     return GetBuilder<QuranReadingController>(
       builder: (context) {
         if (controller.currentPageData != null) {
-          var page = controller.currentPageData!;
+          var page = controller.currentPageData!; //
           var textStyle = theme.primaryTextTheme.labelSmall;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +337,7 @@ class QuranReadingPage extends GetView<QuranReadingController> {
                 children: [
                   Text(
                     // 'الجزء ${ArabicNumbers().convert(page.juzNumber)}',
-                    'الجزء ${page.juzNumber}',
+                    '${Get.context!.translate('theJuz')}${page.juzNumber}',
                     style: textStyle,
                   ),
                   Text(
@@ -158,7 +346,7 @@ class QuranReadingPage extends GetView<QuranReadingController> {
                   ),
                   Text(
                     // 'الصفحة ${ArabicNumbers().convert(page.pageNumber)}',
-                    'الصفحة ${page.pageNumber}',
+                    '${Get.context!.translate('thePage')} ${page.pageNumber}',
                     style: textStyle,
                   ),
                 ],
@@ -195,10 +383,7 @@ class QuranReadingPage extends GetView<QuranReadingController> {
       position: PopupMenuPosition.under,
       itemBuilder: (context) {
         return [
-          CustomPopupMenuItem.build(
-              index: 'search',
-              iconData: FluentIcons.book_search_24_regular,
-              text: 'بحث'),
+          CustomPopupMenuItem.build(index: 'search', iconData: FluentIcons.book_search_24_regular, text: context.translate('search')),
           // customMenuItem(
           //     index: 'fadl',
           //     iconData: FlutterIslamicIcons.quran,
@@ -207,30 +392,12 @@ class QuranReadingPage extends GetView<QuranReadingController> {
           //     index: 'dua',
           //     iconData: FlutterIslamicIcons.prayer,
           //     text: 'دعاء ختم القرآن'),
-          CustomPopupMenuItem.build(
-              index: 'page',
-              iconData: FluentIcons.book_number_16_regular,
-              text: 'إنتقال الى صفحة'),
-          CustomPopupMenuItem.build(
-              index: 'surah',
-              iconData: Iconsax.book_1,
-              text: 'إنتقال الى سورة'),
-          CustomPopupMenuItem.build(
-              index: 'juz',
-              iconData: Iconsax.book_square,
-              text: 'إنتقال الى جزء'),
-          CustomPopupMenuItem.build(
-              index: 'bookmark',
-              iconData: FluentIcons.bookmark_search_20_regular,
-              text: 'العلامات المرجعية'),
-          CustomPopupMenuItem.build(
-              index: 'audio',
-              iconData: FluentIcons.play_settings_20_regular,
-              text: 'إعدادت التشغيل الصوتي'),
-          CustomPopupMenuItem.build(
-              index: 'screen',
-              iconData: FluentIcons.settings_16_regular,
-              text: 'إعدادت القرآن '),
+          CustomPopupMenuItem.build(index: 'page', iconData: FluentIcons.book_number_16_regular, text: context.translate('moveTopage')),
+          CustomPopupMenuItem.build(index: 'surah', iconData: Iconsax.book_1, text: context.translate('moveTosurah')),
+          CustomPopupMenuItem.build(index: 'juz', iconData: Iconsax.book_square, text: context.translate('moveTojuz')),
+          CustomPopupMenuItem.build(index: 'bookmark', iconData: FluentIcons.bookmark_search_20_regular, text: context.translate('bookMarks')),
+          CustomPopupMenuItem.build(index: 'audio', iconData: FluentIcons.play_settings_20_regular, text: context.translate('sounds_settings')),
+          CustomPopupMenuItem.build(index: 'screen', iconData: FluentIcons.settings_16_regular, text: context.translate('quranSettings')),
         ];
       },
       onSelected: controller.onMenuItemSelected,
@@ -289,10 +456,7 @@ class QuranPageHeader extends StatelessWidget {
           children: [
             Text(
               // Display Surah names of the page
-              getPageData(page.pageNumber)
-                  .map((element) =>
-                      (element['surah'] as int).getSurahNameOnlyArabicSimple)
-                  .join(' | '),
+              getPageData(page.pageNumber).map((element) => (element['surah'] as int).getSurahNameOnlyArabicSimple).join(' | '),
               style: textStyle,
             ),
             // Display Juz number and Hizb details of the page
@@ -339,8 +503,7 @@ class QuranPageView extends GetView<QuranReadingController> {
     List<Word>? allWordsNextPage;
 
     if (nextPage != null) {
-      allWordsNextPage =
-          nextPage!.verses.expand((verse) => verse.words).toList();
+      allWordsNextPage = nextPage!.verses.expand((verse) => verse.words).toList();
       controller.nextPageWords = allWordsNextPage;
     }
 
@@ -349,16 +512,12 @@ class QuranPageView extends GetView<QuranReadingController> {
     return GetBuilder<QuranReadingController>(
       builder: (controller) {
         if (controller.displaySettings.isAdaptiveView) {
-          return QuranAdaptiveView(
-              words: allWords,
-              page: page,
-              fontSize: controller.displaySettings.displayFontSize);
+          return QuranAdaptiveView(words: allWords, page: page, fontSize: controller.displaySettings.displayFontSize);
         } else {
           final quranSettingsController = Get.put(QuranSettingsController());
           return context.isLandscape || Get.height < 750
               // enable scroll if the orientation is landscape or screen is small
-              ? nextPage != null &&
-                      quranSettingsController.settingsModel.isDisplayTwoPage
+              ? nextPage != null && quranSettingsController.settingsModel.isDisplayTwoPage
                   ? Row(
                       children: [
                         Expanded(
@@ -491,8 +650,7 @@ class QuranLines extends StatelessWidget {
           (index) {
             int lineNumber = index + 1;
             // filter the words of this line
-            List<Word> lineWords =
-                QuranUtils.getWordsForLine(words, lineNumber);
+            List<Word> lineWords = QuranUtils.getWordsForLine(words, lineNumber);
             return QuranLine(
               lineNumber: lineNumber,
               words: lineWords,
@@ -535,7 +693,7 @@ class QuranLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    var theme = Theme.of(Get.context!);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -543,11 +701,8 @@ class QuranLine extends StatelessWidget {
         // if words of the line are empty then show surah box and bismillah
         if (words.isEmpty) ...[
           // if pageNumber = 1 or pageNumber = 187 skip bismillah
-          if (isNextLineEmpty ||
-              page.pageNumber == 1 ||
-              page.pageNumber == 187) ...[
-            if ((page.pageNumber == 1 || page.pageNumber == 2) &&
-                lineNumber > 8) ...[
+          if (isNextLineEmpty || page.pageNumber == 1 || page.pageNumber == 187) ...[
+            if ((page.pageNumber == 1 || page.pageNumber == 2) && lineNumber > 8) ...[
               // first 2 pages has only 7 lines
               const SizedBox(height: 25),
             ] else ...[
@@ -572,27 +727,25 @@ class QuranLine extends StatelessWidget {
         return RichText(
           text: TextSpan(
             // Set the line height based on the calculated height of a Quranic line.
-            style: TextStyle(height: QuranUtils.calcHeightOfQuranLine()),
+            style: TextStyle(
+              height: QuranUtils.calcHeightOfQuranLine(),
+            ),
             children: words.map(
               (word) {
                 // this handle of which verse we are
-                var verse = page.verses
-                    .firstWhere((element) => element.id == word.verseId);
+                var verse = page.verses.firstWhere((element) => element.id == word.verseId);
                 // Build the Quranic word TextSpan using the buildQuranWordTextSpan method.
                 return buildQuranWordTextSpan(
                   onTap: () {
-                    final quranAudioPlayerBottomBarController =
-                        Get.put(QuranAudioPlayerBottomBarController());
+                    final quranAudioPlayerBottomBarController = Get.put(QuranAudioPlayerBottomBarController());
                     if (verse.isHighlighted.value) {
-                      quranAudioPlayerBottomBarController.isAyahSelected.value =
-                          false;
+                      quranAudioPlayerBottomBarController.isAyahSelected.value = false;
                       verse.isHighlighted.value = false;
                       for (var element in verse.words) {
                         element.isHighlighted.value = false;
                       }
                     } else {
-                      quranAudioPlayerBottomBarController.isAyahSelected.value =
-                          true;
+                      quranAudioPlayerBottomBarController.isAyahSelected.value = true;
                       for (var i = 0; i < page.verses.length; i++) {
                         page.verses[i].isHighlighted.value = false;
                         for (var element in page.verses[i].words) {
@@ -703,20 +856,12 @@ class QuranAdaptiveView extends StatelessWidget {
                   ],
                   ...verse.words.map(
                     (word) => buildQuranWordTextSpan(
-                      onTap: () => showVerseInfoBottomSheet(
-                          verse: verse, word: word, context: Get.context!),
+                      onTap: () => showVerseInfoBottomSheet(verse: verse, word: word, context: Get.context!),
                       text: word.textV1,
                       fontSize: fontSize,
-                      wordColor: QuranUtils.getQuranWordColor(
-                          isHighlighted: word.isHighlighted,
-                          isMarker: word.wordType == 'end',
-                          theme: theme),
-                      verseColor: QuranUtils.getVerseBackgroundColor(
-                          isVerseHighlighted: verse.isHighlighted,
-                          isWordHighlighted: word.isHighlighted,
-                          backgroundColor: theme.colorScheme.surfaceVariant),
-                      fontFamily: QuranUtils.getFontNameOfQuranPage(
-                          pageNumber: page.pageNumber),
+                      wordColor: QuranUtils.getQuranWordColor(isHighlighted: word.isHighlighted, isMarker: word.wordType == 'end', theme: theme),
+                      verseColor: QuranUtils.getVerseBackgroundColor(isVerseHighlighted: verse.isHighlighted, isWordHighlighted: word.isHighlighted, backgroundColor: theme.colorScheme.surfaceVariant),
+                      fontFamily: QuranUtils.getFontNameOfQuranPage(pageNumber: page.pageNumber),
                     ),
                   ),
                 ],

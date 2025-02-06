@@ -38,6 +38,7 @@ class HizbListView extends GetView {
         Get.toNamed(
           Routes.QURAN_READING_PAGE,
           arguments: QuranNavigationArgumentModel(
+            isKhatma: false,
             surahNumber: hizbData['surah']!.toInt(),
             pageNumber: pageNumber,
             verseNumber: hizbData['verse']!.toInt(),

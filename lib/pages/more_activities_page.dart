@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:islamina_app/constants/constants.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:islamina_app/constants/all_activites.dart';
 import 'package:islamina_app/pages/app_settings_page.dart';
@@ -15,7 +16,7 @@ class MoreActivitiesPage extends GetView<MoreActivitiesController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text($strings.moreActivities),
+        title: Text(context.translate('moreActivities')),
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
         actions: [
           IconButton(
@@ -35,7 +36,7 @@ class MoreActivitiesPage extends GetView<MoreActivitiesController> {
         itemCount: Activites.activities.length,
         itemBuilder: (context, index) {
           return CustomButtonBigIcon(
-            text: Activites.activities[index]['text'],
+            text: context.translate(Activites.activities[index]['text']) ,
             iconData: Activites.activities[index]['icon'],
             onTap: Activites.activities[index]['onTap'],
           );

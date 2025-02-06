@@ -1,48 +1,79 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/HomeWidgetData.dart';
 import 'package:islamina_app/constants/all_activites.dart';
 import 'package:islamina_app/constants/constants.dart';
+import 'package:islamina_app/controllers/e_tasbih_controller.dart';
+import 'package:islamina_app/controllers/home_controller.dart';
 import 'package:islamina_app/controllers/prayer_time_controller.dart';
+import 'package:islamina_app/controllers/quran_main_dashborad_controller.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:islamina_app/data/repository/prayer_time_repository.dart';
+import 'package:islamina_app/features/khatma/presentation/blocs/cubit/khatma_cubit.dart';
+import 'package:islamina_app/features/khatma/presentation/pages/add_khatma_page_veiw.dart';
 import 'package:islamina_app/handlers/notification_alarm_handler.dart';
 import 'package:islamina_app/main.dart';
+import 'package:islamina_app/services/services.dart';
 import 'package:islamina_app/widgets/arabic_timer_widget.dart';
 import 'package:islamina_app/widgets/custom_message_button_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:sound_mode/permission_handler.dart';
+import 'package:sound_mode/sound_mode.dart';
+import 'package:sound_mode/utils/ringer_mode_statuses.dart';
 import '../controllers/main_controller.dart';
 import 'package:islamina_app/utils/utils.dart';
-
 import '../widgets/daily_content_widget.dart';
 
 class MainPage extends GetView<MainController> {
   const MainPage({super.key});
   @override
   Widget build(BuildContext context) {
+    Get.put(HomeController());
+    Get.put(QuranMainDashboradController());
+    Get.put(ElectronicTasbihController());
     var theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          // onTap: () => Get.to(const TestSound()),
+          onDoubleTap: () async {
+            RingerModeStatus ringerStatus = await SoundMode.ringerModeStatus;
+            bool? isGranted = await PermissionHandler.permissionsGranted;
+
+            if (!isGranted!) {
+              // Opens the Do Not Disturb Access settings to grant the access
+              await PermissionHandler.openDoNotDisturbSetting();
+            }
+            print(ringerStatus.toString());
+            try {
+              await SoundMode.setSoundMode(RingerModeStatus.silent);
+            } on PlatformException {
+            }
+          },
           child: Text(
-            appName,
+            context.translate('appName'),
             style: theme.textTheme.headlineSmall?.copyWith(
               color: Colors.white,
             ),
           ),
         ),
-        actions: [
-          Text(
-            'Islamina',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontSize: 18.sp,
-            ),
-          ),
-          const Gap(10),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child: Text(
+        //        context.translate('appName'),
+        //       style: theme.textTheme.headlineSmall?.copyWith(
+        //         color: Colors.white,
+        //         fontSize: 18.sp,
+        //       ),
+        //     ),
+        //   ),
+        // ],
         // actions: [
         //   Column(
         //     crossAxisAlignment: CrossAxisAlignment.end,
@@ -99,7 +130,7 @@ class MainPage extends GetView<MainController> {
                             SizedBox(
                               // width: 64.w,
                               child: Text(
-                                activity['text'],
+                                context.translate(activity['text']),
                                 style: Theme.of(context).textTheme.titleSmall,
                                 textAlign: TextAlign.center,
                               ),
@@ -131,7 +162,7 @@ class MainPage extends GetView<MainController> {
                             SizedBox(
                               // width: 64.w,
                               child: Text(
-                                activity['text'],
+                                context.translate(activity['text']),
                                 style: Theme.of(context).textTheme.titleSmall,
                                 textAlign: TextAlign.center,
                               ),
@@ -150,31 +181,29 @@ class MainPage extends GetView<MainController> {
                 children: [
                   DailyContentContainer(
                     description: controller.dailyContent?.dua ?? '',
-                    title: 'دعاء اليوم',
+                    title: 'duaToday',
                   ),
                   DailyContentContainer(
-                    description:
-                        '${controller.dailyContent?.generalInfo['content']}',
-                    subtitle:
-                        '${controller.dailyContent?.generalInfo['title']}',
-                    title: 'معلومة',
+                    description: '${controller.dailyContent?.generalInfo['content']}',
+                    subtitle: '${controller.dailyContent?.generalInfo['title']}',
+                    title: 'information',
                   ),
                   DailyContentContainer(
                     description: '${controller.dailyContent?.hadith['text']}',
                     subtitle: '${controller.dailyContent?.hadith['rwi']}',
-                    title: 'حديث اليوم',
+                    title: 'hadithToday',
                   ),
                   DailyContentContainer(
                     description: '${controller.dailyContent?.verse['ayah']}',
                     subtitle: '${controller.dailyContent?.verse['surah']}',
-                    title: 'آية اليوم',
+                    title: 'ayahToday',
                   ),
                   DailyContentContainer(
                     description: '${controller.dailyContent?.asmOfAllah.ttl}',
                     subtitle: '\n${controller.dailyContent?.asmOfAllah.dsc}',
                     descriptionTextStyle: theme.textTheme.displayLarge,
                     subtitleTextStyle: theme.textTheme.labelLarge,
-                    title: 'اسماء الله الحسنى',
+                    title: 'asmaullah',
                   ),
                 ],
               );
@@ -192,6 +221,7 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = BlocProvider.of<ThemeCubit>(context).locale;
     PrayerTimeRepository repository = Get.find();
 
     var timeLeftKey = GlobalKey<ArabicTimerWidgetState>();
@@ -202,9 +232,8 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
         return controller.repository.coordinates == null
             ? Center(
                 child: MessageWithButtonWidget(
-                  title:
-                      'الرجاء السماح بصلاحيات الموقع مرة واحدة على الاقل للحصول على بيانات اوقات الصلاة',
-                  buttonText: 'إعطاء صلاحية',
+                  title: 'pleaseAllowPermissionFotGetPrayerTimes',
+                  buttonText: 'givePermission',
                   onTap: () async {
                     await controller.repository.getCoordinatesFromLocation();
 
@@ -238,9 +267,8 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
                         // Gap(15, crossAxisExtent: Get.width),
                         const Gap(5),
                         Text(
-                          '${repository.getNextPrayer().name} بعد',
-                          style:
-                              context.theme.textTheme.headlineSmall!.copyWith(
+                          locale.languageCode == 'ar' ? '${repository.getNextPrayer().name} بعد' : '${repository.getNextPrayer().englishName} after',
+                          style: context.theme.textTheme.headlineSmall!.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -249,8 +277,7 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
                         ArabicTimerWidget(
                           key: timeLeftKey,
                           targetDate: repository.getNextPrayer().fulldate,
-                          style:
-                              context.theme.textTheme.headlineSmall!.copyWith(
+                          style: context.theme.textTheme.headlineSmall!.copyWith(
                             color: Colors.orange,
                             fontWeight: FontWeight.bold,
                           ),
@@ -263,8 +290,7 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
                           children: [
                             Text(
                               Utils.getCurrentDateHijri(),
-                              style:
-                                  context.theme.textTheme.titleSmall!.copyWith(
+                              style: context.theme.textTheme.titleSmall!.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -272,8 +298,7 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
                             const Gap(5),
                             Text(
                               Utils.getCurrentDate(),
-                              style:
-                                  context.theme.textTheme.titleSmall!.copyWith(
+                              style: context.theme.textTheme.titleSmall!.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -298,9 +323,8 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
                               return Column(
                                 children: [
                                   Text(
-                                    prayerTime.name,
-                                    style: context.theme.textTheme.titleMedium!
-                                        .copyWith(
+                                    locale.languageCode == 'ar' ? prayerTime.name : prayerTime.englishName,
+                                    style: context.theme.textTheme.titleMedium!.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -341,8 +365,7 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
                                   const Gap(5),
                                   Text(
                                     prayerTime.time,
-                                    style: context.theme.textTheme.titleSmall!
-                                        .copyWith(
+                                    style: context.theme.textTheme.titleSmall!.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -352,27 +375,37 @@ class PrayerTimeCardDetailsView extends StatelessWidget {
                             }),
                           ),
                         ),
-                        // const Gap(15),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        //   children: [
-                        //     Text(
-                        //       'منتصف الليل : 11:00',
-                        //       style:
-                        //           context.theme.textTheme.titleMedium!.copyWith(
-                        //         color: Colors.white,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //     ),
-                        //     Text(
-                        //       'الثلث الأخير : 02:00',
-                        //       style:
-                        //           context.theme.textTheme.titleMedium!.copyWith(
-                        //         color: Colors.white,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //     ),
-                        //   ],
+                        const Gap(15),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.circular(10),
+                            color: context.theme.primaryColor.withOpacity(.5),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(
+                                '${context.translate('last_third')} : ${calculateLastThirdOfNight()}',
+                                style: context.theme.textTheme.titleMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '${context.translate('mid_night')} : ${calculateMidNight()}',
+                                style: context.theme.textTheme.titleMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         // ),
                         const Gap(15),
                       ],
@@ -431,13 +464,17 @@ class LocationTextWidget extends GetView<PrayerTimeController> {
                 size: 29,
               ),
               const Gap(5),
-              Text(
-                // snapshot.data!,
-                result,
-                textAlign: TextAlign.start,
-                style: context.theme.textTheme.bodyLarge!.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  // snapshot.data!,
+                  result,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                  style: context.theme.textTheme.bodyLarge!.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

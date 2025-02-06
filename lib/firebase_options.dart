@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,20 +46,31 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBBOI5TjDtbAsj5MWIeciuQYWQ24cjCAc0',
+    appId: '1:523141448817:web:ca0e1c90bcc0601a7887d0',
+    messagingSenderId: '523141448817',
+    projectId: 'islamana-6139e',
+    authDomain: 'islamana-6139e.firebaseapp.com',
+    storageBucket: 'islamana-6139e.appspot.com',
+    measurementId: 'G-QLJ1W0LCZS',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD2r1QxdlDSO9FH8mKKupwMkOz2bE9yMdw',
-    appId: '1:845355176830:android:4767b13b45ffbc51f3592f',
-    messagingSenderId: '845355176830',
-    projectId: 'islamina-d1c6a',
-    storageBucket: 'islamina-d1c6a.appspot.com',
+    apiKey: 'AIzaSyAxwvv3jRfoQr9VPK909zanz0aFP3gZA-M',
+    appId: '1:523141448817:android:42c07d48a16e44a97887d0',
+    messagingSenderId: '523141448817',
+    projectId: 'islamana-6139e',
+    storageBucket: 'islamana-6139e.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDT5hzGTVQD8C_mgM_8k1GKPeaMwaeYv8s',
-    appId: '1:845355176830:ios:9cd4df7d2f5cb783f3592f',
-    messagingSenderId: '845355176830',
-    projectId: 'islamina-d1c6a',
-    storageBucket: 'islamina-d1c6a.appspot.com',
+    apiKey: 'AIzaSyD8lDW9FCHw9RXfsfsUnspZOv_kw11R6S8',
+    appId: '1:523141448817:ios:279b2e788042906c7887d0',
+    messagingSenderId: '523141448817',
+    projectId: 'islamana-6139e',
+    storageBucket: 'islamana-6139e.appspot.com',
+    iosClientId: '523141448817-vme1o9q585v74huquj0npe9dh5ssuhjv.apps.googleusercontent.com',
     iosBundleId: 'com.islamina.islaminaApp',
   );
 }

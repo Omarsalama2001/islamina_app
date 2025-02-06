@@ -1,12 +1,16 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:islamina_app/core/utils/theme/cubit/theme_cubit.dart';
 import 'package:islamina_app/data/models/download_surah_model.dart';
 import 'package:islamina_app/utils/extension.dart';
 import '../../../../../data/repository/readers_repository.dart';
 import '../../../../../widgets/custom_progress_indicator.dart';
 import '../controllers/quran_audio_download_manager_controller.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+
 
 class QuranAudioDownloadManagerPage
     extends GetView<QuranAudioDownloadManagerController> {
@@ -18,8 +22,8 @@ class QuranAudioDownloadManagerPage
     return Scaffold(
       appBar: AppBar(
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
-        title: const Text(
-          'إداراة الملفات الصوتية',
+        title:  Text(
+          context.translate("sounds_sub"),
         ),
       ),
       body: FutureBuilder(
@@ -93,7 +97,7 @@ class QuranAudioDownloadManagerPage
                     const Icon(Icons.keyboard_arrow_down),
                     const SizedBox(width: 5),
                     Text(
-                      controller.readers[readerIndex].name,
+                    BlocProvider.of<ThemeCubit>(context).locale.languageCode =='ar'?  controller.readers[readerIndex].name :controller.readers[readerIndex].englishName,
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ],
@@ -107,7 +111,7 @@ class QuranAudioDownloadManagerPage
                         reader: controller.readers[readerIndex]);
                   },
                   child: Text(
-                    'تحميل الكل', // Updated button text for English
+                   context.translate('download_all'), // Updated button text for English
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),

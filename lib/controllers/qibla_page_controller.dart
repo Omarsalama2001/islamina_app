@@ -26,6 +26,10 @@ class QiblaController extends GetxController with GetTickerProviderStateMixin {
 
   double distanceToKaaba = 0.0;
 
+  checkIfPhoneFaceKabaa(){
+    
+  }
+
   Future<void> calculateDistance() async {
     PrayerTimeController controller = Get.find();
     double currentLatitude = controller.repository.coordinates!.latitude;
@@ -100,6 +104,7 @@ class QiblaController extends GetxController with GetTickerProviderStateMixin {
   void onClose() {
     _locationStreamController.close();
     _positionStreamController.close();
+    
     super.onClose();
   }
 

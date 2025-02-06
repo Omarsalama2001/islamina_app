@@ -37,8 +37,7 @@ class QuranAudioDownloadHandler {
       {required int surahId,
       required QuranReader reader,
       required Function(int surah, int progress) surahProgress}) async {
-    if (await ReaderTimingDataDownloadHandler.checkIfDataExists(
-        reader: reader)) {
+   
       if (await Utils.checkForInternetConnection()) {
         // Increment surahId to match the Quran numbering
         surahId++;
@@ -80,8 +79,7 @@ class QuranAudioDownloadHandler {
         showNoInternetDialog();
         return false;
       }
-    } else {
-      return false;
+
     }
   }
-}
+

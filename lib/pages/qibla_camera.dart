@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/widgets/custom_progress_indicator.dart';
 import 'package:islamina_app/widgets/loading_error_text.dart';
 import 'package:smooth_compass/utils/src/compass_ui.dart';
@@ -23,8 +24,7 @@ class QiblaCamera extends StatefulWidget {
   State<QiblaCamera> createState() => _QiblaCameraState();
 }
 
-class _QiblaCameraState extends State<QiblaCamera>
-    with SingleTickerProviderStateMixin {
+class _QiblaCameraState extends State<QiblaCamera> with SingleTickerProviderStateMixin {
   double begin = 0.0;
   bool showRow = false;
   double end = 0.0;
@@ -44,8 +44,7 @@ class _QiblaCameraState extends State<QiblaCamera>
   }
 
   Future initCamera() async {
-    _cameraController =
-        CameraController(widget.cameras[0], ResolutionPreset.max);
+    _cameraController = CameraController(widget.cameras[0], ResolutionPreset.max);
     _cameraController.initialize().then((_) {
       if (!mounted) {
         return;
@@ -96,14 +95,8 @@ class _QiblaCameraState extends State<QiblaCamera>
             denied: "location permission is denied",
             permanentlyDenied: "location permission is permanently denied",
           ),
-          buttonStyle: ErrorButtonStyle(
-              borderRadius: BorderRadius.circular(10),
-              buttonColor: Colors.red,
-              textColor: Colors.white,
-              buttonHeight: 40,
-              buttonWidth: 150),
-          messageTextStyle: const TextStyle(
-              color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 18)),
+          buttonStyle: ErrorButtonStyle(borderRadius: BorderRadius.circular(10), buttonColor: Colors.red, textColor: Colors.white, buttonHeight: 40, buttonWidth: 150),
+          messageTextStyle: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 18)),
       height: 100,
       width: 100,
       compassBuilder: (context, snapshot, child) {
@@ -133,14 +126,8 @@ class _QiblaCameraState extends State<QiblaCamera>
               } else if (!snapshot.hasData || snapshot.hasError) {
                 return const Center(child: LoadingErrorText());
               }
-              int kabba = ((snapshotData.data?.offset ?? 0) -
-                      (snapshotData.data?.direction ?? 0))
-                  .toInt();
-              bool isSuccessQibla = kabba == 0 ||
-                  kabba == 1 ||
-                  kabba == 2 ||
-                  kabba == -1 ||
-                  kabba == -2;
+              int kabba = ((snapshotData.data?.offset ?? 0) - (snapshotData.data?.direction ?? 0)).toInt();
+              bool isSuccessQibla = kabba == 0 || kabba == 1 || kabba == 2 || kabba == -1 || kabba == -2;
               return Stack(
                 children: [
                   if (_cameraController.value.isInitialized) ...[
@@ -199,14 +186,11 @@ class _QiblaCameraState extends State<QiblaCamera>
                               Expanded(
                                 child: Column(
                                   children: [
-                                    isSuccessQibla
-                                        ? _buildCompassIcon()
-                                        : const SizedBox.shrink(),
+                                    isSuccessQibla ? _buildCompassIcon() : const SizedBox.shrink(),
                                     Text(
                                       // "درجة القبلة ${snapshot.data!.qiblahOffset.toStringAsFixed(1)}",
-                                      "درجة القبلة $kabba",
-                                      style: context.textTheme.titleLarge!
-                                          .copyWith(
+                                      "${context.translate("qibla_degree")} $kabba",
+                                      style: context.textTheme.titleLarge!.copyWith(
                                         color: Colors.white,
                                       ),
                                     ),
@@ -252,7 +236,7 @@ class _QiblaCameraState extends State<QiblaCamera>
                           FittedBox(
                             child: Text(
                               // "درجة القبلة ${snapshot.data!.qiblahOffset.toStringAsFixed(1)}",
-                              "يجب التحريك حتى تصبح درجة القبلة ( 0 )",
+                              context.translate("vrQiblaDescription"),
                               style: context.textTheme.titleLarge!.copyWith(
                                 color: Colors.white,
                               ),
@@ -410,15 +394,7 @@ class _QiblaCameraState extends State<QiblaCamera>
 }
 
 class ImageBuilder extends StatefulWidget {
-  const ImageBuilder(
-      {super.key,
-      required this.height,
-      this.shape,
-      required this.width,
-      required this.boxFit,
-      this.color,
-      required this.borderRadius,
-      required this.imageUrl});
+  const ImageBuilder({super.key, required this.height, this.shape, required this.width, required this.boxFit, this.color, required this.borderRadius, required this.imageUrl});
   final double height;
   final double width;
   final String imageUrl;
@@ -435,8 +411,7 @@ class _ImageBuilderState extends State<ImageBuilder> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints:
-          BoxConstraints(maxHeight: widget.height, maxWidth: widget.width),
+      constraints: BoxConstraints(maxHeight: widget.height, maxWidth: widget.width),
       height: widget.height,
       width: widget.width,
       decoration: BoxDecoration(

@@ -14,55 +14,62 @@ class Activites {
   static List<Map<String, dynamic>> shortcuts2 = [
     {
       'icon': 'assets/svg/collection_icon/quran.svg',
-      'text': 'القرآن الكريم',
+      'text': 'quran',
       'onTap': () {
         Get.find<HomeController>().onDestinationChanged(1);
       },
     },
     {
       'icon': 'assets/svg/collection_icon/hadees.svg',
-      'text': 'تسابيح',
+      'text': 'tasabih',
       'onTap': () {
         Get.toNamed(
           Routes.AZKAR_DETAILS,
-          arguments: {'pageTitle': 'تسابيح', 'type': AzkarPageType.tasabih},
+          arguments: {'pageTitle': 'tasabih', 'type': AzkarPageType.tasabih},
         );
       },
     },
     {
       'icon': 'assets/svg/collection_icon/duas.svg',
-      'text': 'أذكار المسلم',
+      'text': 'azkarCategories',
       'onTap': () {
         Get.toNamed(Routes.AZKAR_CATEGORIES);
       },
     },
+
     {
       'icon': 'assets/svg/collection_icon/tasbih.svg',
-      'text': 'المسبحة الإلكترونية',
+      'text': 'eTasbih',
       'onTap': () {
-        Get.toNamed(Routes.ELECTRONIC_TASBIH);
+        Get.toNamed(Routes.sebha);
       },
     },
+    // {
+    //   'icon': 'assets/svg/collection_icon/allah.svg',
+    //   'text': 'اسماء الله',
+    //   'onTap': () {
+    //     Get.toNamed(Routes.ASMAULLAH_PAGE);
+    //   },
+    // },
     {
-      'icon': 'assets/svg/collection_icon/allah.svg',
-      'text': 'اسماء الله',
+      'icon': 'assets/svg/collection_icon/tasbih.svg',
+      'text': 'khatma',
       'onTap': () {
-        Get.toNamed(Routes.ASMAULLAH_PAGE);
+        Get.toNamed(Routes.KHATMA);
       },
     },
     {
       'icon': 'assets/svg/collection_icon/prayer_time.svg',
-      'text': 'أوقات الصلاة',
+      'text': 'prayerTimes',
       'onTap': () {
         Get.find<HomeController>().onDestinationChanged(2);
       },
     },
     {
       'icon': 'assets/svg/collection_icon/kiblat.svg',
-      'text': 'القبلة',
+      'text': 'qibla',
       'onTap': () async {
-        bool getCameras =
-            await Get.put(QiblaController()).getAvailableCameras();
+        bool getCameras = await Get.put(QiblaController()).getAvailableCameras();
         if (getCameras) {
           Get.toNamed(Routes.QIBLA_PAGE);
         }
@@ -70,7 +77,7 @@ class Activites {
     },
     {
       'icon': 'assets/svg/collection_icon/other.svg',
-      'text': 'المزيد',
+      'text': 'more',
       'onTap': () {
         Get.find<HomeController>().onDestinationChanged(3);
       },
@@ -82,14 +89,14 @@ class Activites {
       'onTap': () {
         Get.toNamed(Routes.ELECTRONIC_TASBIH);
       },
-      'text': 'المسبحة الإلكترونية',
+      'text': 'eTasbih',
     },
     {
       'icon': FlutterIslamicIcons.prayer,
       'onTap': () {
         Get.toNamed(Routes.AZKAR_CATEGORIES);
       },
-      'text': 'أذكار المسلم',
+      'text': 'azkarCategories',
     },
     {
       'icon': FlutterIslamicIcons.allahText,
@@ -123,7 +130,7 @@ class Activites {
       'onTap': () {
         Get.toNamed(Routes.QIBLA_PAGE);
       },
-      'text': 'القبلة',
+      'text': 'qibla',
     },
   ];
   static List<Map<String, dynamic>> activities = [
@@ -132,31 +139,31 @@ class Activites {
       'onTap': () {
         Get.toNamed(Routes.ASMAULLAH_PAGE);
       },
-      'text': 'اسماء الله الحسنى',
+      'text': 'asmaullah',
     },
     {
       'icon': FlutterIslamicIcons.tasbih2,
       'onTap': () {
         Get.toNamed(Routes.ELECTRONIC_TASBIH);
       },
-      'text': 'المسبحة الإلكترونية',
+      'text': "eTasbih",
     },
     {
       'icon': FlutterIslamicIcons.prayer,
       'onTap': () {
         Get.toNamed(Routes.AZKAR_CATEGORIES);
       },
-      'text': 'أذكار المسلم',
+      'text':  "azkarCategories",
     },
     {
       'icon': FlutterIslamicIcons.tasbihHand,
       'onTap': () {
         Get.toNamed(
           Routes.AZKAR_DETAILS,
-          arguments: {'pageTitle': 'تسابيح', 'type': AzkarPageType.tasabih},
+          arguments: {'pageTitle': "tasabih", 'type': AzkarPageType.tasabih},
         );
       },
-      'text': 'تسابيح',
+      'text':"tasabih",
     },
     {
       'icon': FlutterIslamicIcons.sajadah,
@@ -164,34 +171,33 @@ class Activites {
         Get.toNamed(
           Routes.AZKAR_DETAILS,
           arguments: {
-            'pageTitle': 'الحمد',
+            'pageTitle': "hmd",
             'type': AzkarPageType.hmd,
           },
         );
       },
-      'text': 'الحمد',
+      'text': "hmd",
     },
     {
       'icon': FlutterIslamicIcons.prayingPerson,
       'onTap': () {
         Get.toNamed(
           Routes.AZKAR_DETAILS,
-          arguments: {'pageTitle': 'استغفار', 'type': AzkarPageType.istighfar},
+          arguments: {'pageTitle':"istighfar", 'type': AzkarPageType.istighfar},
         );
       },
-      'text': 'استغفار',
+      'text': "istighfar",
     },
     {
       'icon': FlutterIslamicIcons.qibla2,
       'onTap': () async {
         // Get.toNamed(Routes.QIBLA_PAGE);
-        bool getCameras =
-            await Get.put(QiblaController()).getAvailableCameras();
+        bool getCameras = await Get.put(QiblaController()).getAvailableCameras();
         if (getCameras) {
           Get.toNamed(Routes.QIBLA_PAGE);
         }
       },
-      'text': 'القبلة',
+      'text': 'qibla',
     },
     // {
     //   'icon': FlutterIslamicIcons.qibla,
@@ -209,20 +215,17 @@ class Activites {
       'onTap': () {
         Get.to(() => const Hadith40Page());
       },
-      'text': 'الاربعون النووية',
+      'text':"hadith40",
     },
     {
       'icon': FlutterIslamicIcons.hadji,
       'onTap': () {
         Get.toNamed(
           Routes.AZKAR_DETAILS,
-          arguments: {
-            'pageTitle': 'أدعية الانبياء',
-            'type': AzkarPageType.prophet_dua
-          },
+          arguments: {'pageTitle': "prophetDua", 'type': AzkarPageType.prophet_dua},
         );
       },
-      'text': 'أدعية الأنبياء',
+      'text': "prophetDua",
     },
     {
       'icon': FlutterIslamicIcons.prayingPerson,
@@ -230,50 +233,54 @@ class Activites {
         Get.toNamed(
           Routes.AZKAR_DETAILS,
           arguments: {
-            'pageTitle': 'أدعية نبوية',
+            'pageTitle': "pDua",
             'type': AzkarPageType.p_dua,
           },
         );
       },
-      'text': 'أدعية نبوية',
+      'text':    "pDua" ,
     },
     {
       'icon': FlutterIslamicIcons.quran,
       'onTap': () {
         Get.toNamed(
           Routes.AZKAR_DETAILS,
-          arguments: {
-            'pageTitle': 'أدعية قرآنية',
-            'type': AzkarPageType.quran_dua
-          },
+          arguments: {'pageTitle': "quranDua", 'type': AzkarPageType.quran_dua},
         );
       },
-      'text': 'أدعية قرآنية',
+      'text': "quranDua",
     },
     {
       'icon': FlutterIslamicIcons.prayingPerson,
       'onTap': () {
         Get.toNamed(Routes.AZKAR_DETAILS, arguments: {
-          'pageTitle': 'أدعية أخرى',
+          'pageTitle': 'anotherDua',
           'categoryId': 13,
           'type': AzkarPageType.azkar,
         });
       },
-      'text': 'أدعية أخرى',
+      'text': 'anotherDua',
     },
     {
       'icon': FluentIcons.bookmark_search_20_regular,
       'onTap': () {
         Get.toNamed(Routes.QURAN_BOOKMARKS);
       },
-      'text': 'العلامات المرجعية',
+      'text': 'quranBookMarks',
     },
     {
       'icon': FluentIcons.book_search_20_regular,
       'onTap': () {
         Get.toNamed(Routes.QURAN_SEARCH_VIEW);
       },
-      'text': 'بحث في القرآن',
+      'text': 'quranSearch',
+    },
+      {
+      'icon': FluentIcons.radio_button_16_filled,
+      'onTap': () {
+        Get.toNamed(Routes.radio);
+      },
+      'text': 'radio',
     },
     // {
     //   'icon': FluentIcons.note_add_20_regular,
@@ -295,7 +302,7 @@ class Activites {
           );
         }
       },
-      'text': 'اتصل بنا',
+      'text': 'contactUs',
     },
     // {
     //   'icon': FluentIcons.share_20_regular,

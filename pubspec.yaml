@@ -8,70 +8,102 @@ environment:
 
 dependencies:
   adhan: ^2.0.0+1
-  android_alarm_manager_plus: ^4.0.3
+  android_alarm_manager_plus: ^4.0.4
+  print_remover: ^1.0.2
   arabic_numbers: ^1.0.0
   audio_service: ^0.18.14
+  hijri: ^3.0.0
   audio_session: ^0.1.20
+  audioplayers: ^6.1.0
   auto_size_text: ^3.0.0
   awesome_notifications: ^0.9.3+1
+  buttons_tabbar: ^1.3.13
+  cached_network_image: ^3.4.1
   camera: ^0.11.0+1
   choice: ^2.3.2
-  connectivity: ^3.0.6
+  cloud_firestore: ^5.4.4
+  connectivity_plus: ^6.0.5
+  country_flags: ^3.0.0
+  dartz: ^0.10.1
+  davinci: ^2.5.1
   device_info_plus: ^10.1.0
   device_preview: ^1.2.0
   dio: ^5.5.0+1
   dots_indicator: ^3.0.0
+  duration_picker: ^1.2.0
+  easy_radio: ^0.0.3
   easy_rich_text: ^2.1.0
   enum_to_string: ^2.0.1
+  equatable: ^2.0.5
   expandable: ^5.0.1
-  firebase_core: ^3.2.0
+  file_picker: ^8.1.7
+  firebase_auth: ^5.3.1
+  firebase_core: ^3.6.0
   firebase_remote_config: ^5.0.3
   flex_color_scheme: ^7.3.1
+  flip_card: ^0.7.0
   fluentui_system_icons: ^1.1.248
   flutter:
     sdk: flutter
+  flutter_audio_waveforms: ^1.2.1+8
+  flutter_background_service: ^5.0.10
+  flutter_bloc: ^8.1.6
   flutter_islamic_icons: ^1.0.2
-  flutter_local_notifications: null
+  flutter_local_notifications: ^18.0.1
   flutter_localizations:
     sdk: flutter
-  flutter_qiblah: any
+  flutter_qiblah: ^3.0.4
   flutter_svg: ^2.0.10+1
   flutter_timezone: ^2.1.0
   flutter_toggle_tab: ^1.4.1
-  fluttertoast: ^8.2.6
+  fluttertoast: ^8.2.8
   gap: ^3.0.1
   geocoding: ^3.0.0
-  geolocator: ^11.1.0
+  geolocator: ^13.0.1
   get: 4.6.6
   get_it: ^7.7.0
   get_storage: ^2.1.1
   google_fonts: ^6.2.1
+  google_sign_in: ^6.2.1
+  home_widget: ^0.7.0
   http: ^1.2.2
   iconsax: ^0.0.8
+  internet_connection_checker: ^1.0.0+1
   internet_connection_checker_plus: ^2.5.0
   intl: ^0.19.0
   jhijri: ^1.0.0
-  just_audio: ^0.9.39
+  just_audio: ^0.9.43
+  just_audio_background: ^0.0.1-beta.13
   lottie: ^3.1.2
   modal_bottom_sheet: ^3.0.0
+  numberpicker: ^2.1.2
   package_info_plus: ^8.0.0
   path: ^1.9.0
-  path_provider: ^2.1.3
+  path_provider: ^2.1.5
+  percent_indicator: ^4.2.3
   permission_handler: ^11.3.1
+  quickalert: ^1.1.0
   quran: ^1.3.0
   responsive_sizer: ^3.3.1
   rxdart: ^0.27.7
   scroll_to_index: ^3.0.1
   search_highlight_text: ^1.0.0+2
-  share_plus: ^9.0.0
+  sensors_plus: ^6.0.1
+  share_plus: ^10.0.2
   shared_preferences: ^2.2.3
   smooth_compass: ^2.0.17
+  smooth_page_indicator: ^1.2.0+3
+  sound_mode: ^3.0.0
   sqflite: ^2.3.3+1
   status_bar_control: ^3.2.1
   timeago: ^3.7.0
   timezone: ^0.9.4
+  toggle_switch: ^2.3.0
+  twitter_login: ^4.4.2
   url_launcher: ^6.3.0
+  uuid: ^4.5.1
   vibration: ^1.9.0
+  volume_controller: ^2.0.8
   workmanager: ^0.5.2
 #  adhan: ^2.0.0+1
 #  android_alarm_manager_plus: ^4.0.1
@@ -156,8 +188,31 @@ flutter:
     - assets/jsons/
     - assets/audio/
     - assets/jsons/lottie/
+    - assets/animations/
+    - assets/lang/ar.json
+    - assets/lang/en.json
+    # - assets/quran1_merged.pdf
   uses-material-design: true
   fonts:
+    - family: Kitab
+      fonts:
+        - asset: assets/fonts/quran/Kitab-Regular.ttf
+          weight: 700
+    - family: zkhrafa
+      fonts:
+        - asset: assets/fonts/quran/Amiri Quran Colored @Am9li9.ttf
+    - family: allah_names
+      fonts:
+        - asset: assets/fonts/quran/allahnamescolor.ttf
+    - family: shamerly
+      fonts:
+        - asset: assets/fonts/quran/shumurly.ttf
+    - family: allah_names2
+      fonts:
+        - asset: assets/fonts/quran/allah names 3.ttf
+    - family: allah_names3
+      fonts:
+        - asset: assets/fonts/quran/arabic islamic.otf
     - family: Uthmanic_Script
       fonts:
         - asset: assets/fonts/quran/Uthmanic_Script.ttf

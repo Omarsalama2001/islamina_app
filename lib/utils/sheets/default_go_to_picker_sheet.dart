@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 
 class DefaultGoToSheet extends StatelessWidget {
   const DefaultGoToSheet(
@@ -29,7 +30,7 @@ class DefaultGoToSheet extends StatelessWidget {
               padding: const EdgeInsetsDirectional.only(
                   top: 20, start: 25, bottom: 5),
               child: Text(
-                title,
+                context.translate(title),
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
@@ -54,7 +55,7 @@ class DefaultGoToSheet extends StatelessWidget {
                 onPressed: () {
                   onPressed!(selectedValue ?? initValue);
                 },
-                child: const Text('إنتقل'),
+                child:  Text(context.translate("heMoved")),
               ),
             ),
           ],

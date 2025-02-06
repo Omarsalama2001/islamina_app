@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 
 class MessageWithButtonWidget extends StatelessWidget {
   const MessageWithButtonWidget({
@@ -21,13 +22,13 @@ class MessageWithButtonWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              title,
+              context.translate(title),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             FilledButton(
               onPressed: onTap,
-              child: Text(buttonText),
+              child: Text(context.translate(buttonText)),
             ),
           ],
         ),

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_marginTop="6dp"
+    android:orientation="horizontal">
+
+    <!-- Prayer 1 (Fajr) -->
+    <LinearLayout
+        android:id="@+id/prayer1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/prayer1_name"
+            android:text="Fajr"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/prayer1_time"
+            android:text="00:00"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Prayer 2 (Dhuhr) -->
+    <LinearLayout
+        android:id="@+id/prayer2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/prayer2_name"
+            android:text="Dhuhr"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/prayer2_time"
+            android:text="00:00"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- More prayer times can be added here -->
+</LinearLayout>

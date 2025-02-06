@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/core/widgets/snack_bar.dart';
+import 'package:islamina_app/generated/l10n.dart';
 
 import '../../data/models/e_tasbih.dart';
 
@@ -23,7 +27,7 @@ class AddEditTasbihDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        isEditing ? 'تعديل التسبيح' : 'إضافة تسبيح جديد',
+        isEditing ? context.translate('editTasbih'): context.translate('addNewTasbih'),
         style: Theme.of(context).textTheme.titleMedium,
       ),
       content: Column(
@@ -33,7 +37,7 @@ class AddEditTasbihDialog extends StatelessWidget {
             controller: nameController,
             onChanged: updateAddButtonStatus,
             decoration: InputDecoration(
-              labelText: 'التسبيح',
+              labelText: context.translate('tasbih'),
               fillColor: Colors.transparent,
               contentPadding: const EdgeInsets.all(10),
               labelStyle: Theme.of(context).textTheme.labelMedium,
@@ -45,7 +49,7 @@ class AddEditTasbihDialog extends StatelessWidget {
             onChanged: updateAddButtonStatus,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              labelText: 'عدد الحبات',
+              labelText: context.translate('noOfBeads'),
               fillColor: Colors.transparent,
               contentPadding: const EdgeInsets.all(10),
               labelStyle: Theme.of(context).textTheme.labelMedium,
@@ -56,12 +60,12 @@ class AddEditTasbihDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Get.back(result: null),
-          child: const Text('إلغاء'),
+          child:  Text(context.translate('cancel')),
         ),
         Obx(() {
           return TextButton(
             onPressed: isAddButtonEnabled.value ? saveItem : null,
-            child: Text(isEditing ? 'حفظ التعديل' : 'إضافة'),
+            child: Text(isEditing ? context.translate('saveEditing') : context.translate('add')),
           );
         }),
       ],
@@ -69,19 +73,24 @@ class AddEditTasbihDialog extends StatelessWidget {
   }
 
   void updateAddButtonStatus(String _) {
-    isAddButtonEnabled.value =
-        nameController.text.isNotEmpty && countController.text.isNotEmpty;
+    isAddButtonEnabled.value = nameController.text.isNotEmpty && countController.text.isNotEmpty;
   }
 
   void saveItem() {
     final name = nameController.text;
     final count = int.tryParse(countController.text) ?? 0;
     if (isEditing) {
-      Get.back(
-          result: ElectronicTasbihModel(
-              id: editItem!.id, name: name, count: count));
+      if (count < 1) {
+        Fluttertoast.showToast(msg: 'عدد الحبات يجب ان يكون اكبر من 0');
+        return;
+      }
+      Get.back(result: ElectronicTasbihModel(advantage: editItem!.advantage, id: editItem!.id, name: name, count: count, isSystem: 0));
     } else {
-      Get.back(result: ElectronicTasbihModel(name: name, count: count));
+      if (count < 1) {
+         Fluttertoast.showToast(msg: 'عدد الحبات يجب ان يكون اكبر من 0' ,backgroundColor: Colors.white, textColor: Colors.black);
+        return;
+      }
+      Get.back(result: ElectronicTasbihModel(name: name, count: count, advantage: 'أضيف بواسطة المستخدم', isSystem: 0));
     }
   }
 }

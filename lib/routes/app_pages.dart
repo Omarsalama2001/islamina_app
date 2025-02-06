@@ -1,6 +1,12 @@
 import 'package:get/get.dart';
-import 'package:islamina_app/bindings/khatma_binding.dart';
-import 'package:islamina_app/pages/khatma_page.dart';
+import 'package:islamina_app/bindings/boarding_binding.dart';
+import 'package:islamina_app/data/models/quran_navigation_data_model.dart';
+import 'package:islamina_app/features/auth/presentation/pages/login_page.dart';
+import 'package:islamina_app/features/khatma/presentation/pages/khatma_main_page.dart';
+import 'package:islamina_app/features/on_boarding/presentation/pages/on_boarding_screen.dart';
+import 'package:islamina_app/features/radio/presentation/pages/radio_page.dart';
+import 'package:islamina_app/features/sebha/pages/sebha_page.dart';
+import 'package:islamina_app/pages/splash_screen.dart';
 
 import '../bindings/azkar_categories_binding.dart';
 import '../bindings/azkar_details_binding.dart';
@@ -36,17 +42,30 @@ import '../pages/tafsir_download_manager_page.dart';
 import '../views/asmaullah_page_view.dart';
 import '../views/quran_bookmarks_view.dart';
 import '../views/quran_search_view.dart';
-
 // ignore_for_file: constant_identifier_names
-
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.splash;
 
   static final routes = [
+    GetPage(
+      name: _Paths.testQibla,
+      page: () =>  OnBoardingPage(),
+     binding: BoardingBinding(),
+      // binding: QiblaPageBinding(),
+    ),
+
+    GetPage(name: _Paths.Splash, page: () => const SplashScreenPage()),
+    GetPage(name: _Paths.login, page: () => const LoginPage()),
+
+    GetPage(
+      name: _Paths.Sebha,
+      page: () => SebhaPage(),
+
+    ),
     GetPage(
       name: _Paths.HOME,
       page: () => const HomePage(),
@@ -69,8 +88,16 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.QURAN_READING_PAGE,
-      page: () => const QuranReadingPage(),
+      page: () =>  QuranReadingPage(),
       binding: QuranReadingPageBinding(),
+      arguments: QuranNavigationArgumentModel(
+        isKhatma: false,
+        khatmaModel: null,
+        surahNumber: 0,
+        pageNumber: 0,
+        verseNumber: 0,
+        highlightVerse: false,
+      ),
     ),
     GetPage(
       name: _Paths.TAFSIR_DOWNLOAD_MANAGER,
@@ -109,7 +136,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.ASMAULLAH_PAGE,
-      page: () => const AsmaullahPageView(),
+      page: () => AsmaullahPageView(),
     ),
     GetPage(
       name: _Paths.AZKAR_DETAILS,
@@ -127,7 +154,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.ELECTRONIC_TASBIH,
-      page: () => const ElectronicTashbihPage(),
+      page: () =>  SebhaPage(),
       binding: ElectronicTasbihBinding(),
     ),
     GetPage(
@@ -142,8 +169,11 @@ class AppPages {
     // ),
     GetPage(
       name: _Paths.KHATMA,
-      page: () => const KhatmaPage(),
-      binding: KhatmaBinding(),
+      page: () => const KhatmaMainPage(),
+    ),
+    GetPage(
+      name: _Paths.Radio,
+      page: () => RadioPage(),
     ),
   ];
 }

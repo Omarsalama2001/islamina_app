@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 
 class CustomPopupMenuItem {
   static PopupMenuEntry<dynamic> build(
@@ -17,7 +19,7 @@ class CustomPopupMenuItem {
           iconData,
         ),
         title: Text(
-          text,
+          Get.context!.translate(text),
           textAlign: TextAlign.right,
         ),
       ),

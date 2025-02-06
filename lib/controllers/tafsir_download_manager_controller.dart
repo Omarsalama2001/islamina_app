@@ -30,7 +30,7 @@ class TafsirDownloadManagerController extends GetxController {
       tafsir: tafsir,
       onReceiveProgress: (count, total) {
         // Update the download progress
-        tafsir.downloadProgress.value = ((count / total) * 100).toInt();
+        tafsir.downloadProgress.value = ((count / 114  ) * 100).toInt();
       },
     );
     // load data if coming from TafsirDetails

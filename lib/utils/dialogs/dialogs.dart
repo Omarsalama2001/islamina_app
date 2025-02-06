@@ -2,27 +2,28 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path/path.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:islamina_app/constants/json_path.dart';
 
 Future<bool> showAskUserForAlarmPermission() async {
   return await Get.dialog(AlertDialog(
-    title: const Text('إذن التنبيهات'),
-    content: const Text(
-        'ليقوم التطبيق بتذكيرك باوقات الصلاة والاذكار يجب إعطاء إذن التنبيهات'),
+    title:  Text(Get.context!.translate("showAskUserForAlarmPermissionTitle")),
+    content:  Text( Get.context!.translate("showAskUserForAlarmPermissionDescription")),
     actions: <Widget>[
       TextButton(
         onPressed: () {
           Get.back(result: true);
         },
-        child: const Text('السماح'),
+        child:  Text(Get.context!.translate("allow")),
       ),
       TextButton(
         onPressed: () {
           Get.back(result: false);
         },
-        child: const Text('لاحقاََ'),
+        child:  Text(Get.context!.translate("later")),
       )
     ],
   ));
@@ -30,21 +31,20 @@ Future<bool> showAskUserForAlarmPermission() async {
 
 Future<bool> showAskUserForNotificationsPermission() async {
   return await Get.dialog(AlertDialog(
-    title: const Text('إذن اظهار الإشعارات'),
-    content: const Text(
-        'ليقوم التطبيق بتذكيرك باوقات الصلاة والاذكار يجب إعطاء إذن اظهار الإشعارات'),
+    title:  Text(Get.context!.translate("showAskUserForNotificationsPermissionTitle") ),
+    content:  Text(Get.context!.translate("showAskUserForNotificationsPermissionDescription") ),
     actions: [
       TextButton(
         onPressed: () {
           Get.back(result: true);
         },
-        child: const Text('السماح'),
+        child:  Text( Get.context!.translate("allow") ),
       ),
       TextButton(
         onPressed: () {
           Get.back(result: false);
         },
-        child: const Text('لاحقاََ'),
+        child:  Text( Get.context!.translate("later") ),
       )
     ],
   ));
@@ -54,20 +54,18 @@ Future<bool> showAskUserForNotificationsPermission() async {
 void showQiblaCompassCalibrationDialog() {
   Get.dialog(
     AlertDialog(
-      title: const Text('عملية معايرة الهاتف والبوصلة'),
-      content: const SingleChildScrollView(
+      title: Text(Get.context!.translate("showQiblaCompassCalibrationDialogTitle")),
+      content: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
-            Text('قم بمعايرة الهاتف والبوصلة باستخدام الخطوات التالية:'),
+            Text(Get.context!.translate("showQiblaCompassCalibrationDialogDescription1")),
             SizedBox(height: 16),
             Row(
               children: [
                 Icon(Icons.arrow_forward, color: Colors.blue),
                 SizedBox(width: 8),
                 Flexible(
-                  child: Text(
-                    'حرك الهاتف في الاتجاه الأفقي (يمينًا ويسارًا)',
-                  ),
+                  child: Text(Get.context!.translate("showQiblaCompassCalibrationDialogDescription2")),
                 ),
               ],
             ),
@@ -76,9 +74,7 @@ void showQiblaCompassCalibrationDialog() {
                 Icon(Icons.arrow_downward, color: Colors.blue),
                 SizedBox(width: 8),
                 Flexible(
-                  child: Text(
-                    'حرك الهاتف في الاتجاه الرأسي (أعلى وأسفل)',
-                  ),
+                  child: Text(Get.context!.translate("showQiblaCompassCalibrationDialogDescription3")),
                 ),
               ],
             ),
@@ -86,21 +82,17 @@ void showQiblaCompassCalibrationDialog() {
               children: [
                 Icon(Icons.refresh, color: Colors.blue),
                 SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    'قم بتدوير الهاتف حول نفسه باتجاه عقارب الساعة وضد عقارب الساعة',
-                  ),
-                ),
+                Flexible(child: Text(Get.context!.translate("showQiblaCompassCalibrationDialogDescription4"))),
               ],
             ),
             SizedBox(height: 16),
-            Text('تنبيه: إبتعد عن الأشياء المغناطيسية'),
+            Text(Get.context!.translate("showQiblaCompassCalibrationDialogDescription5")),
           ],
         ),
       ),
       actions: <Widget>[
         TextButton(
-          child: const Text('حسناً'),
+          child: Text(Get.context!.translate("okay")),
           onPressed: () {
             Get.back(); // Close the dialog
           },
@@ -114,10 +106,10 @@ void showQiblaCompassCalibrationDialog() {
 Future<bool?> showAzkarNotDoneDialog() async {
   return await Get.dialog<bool>(
     AlertDialog(
-      title: const Text('تنبيه'),
+      title:  Text(Get.context!.translate('alertTitle')),
       content: SizedBox(
         width: 100.w,
-        child: const Text(' لم تنتهي من قراءة الأذكار بعد, هل تريد الخروج؟'),
+        child:  Text(Get.context!.translate('showAzkarNotDoneDialogDescription')),
       ),
       actionsPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       actions: [
@@ -126,17 +118,17 @@ Future<bool?> showAzkarNotDoneDialog() async {
           children: [
             TextButton(
               onPressed: () => Get.back(result: true),
-              child: const Text('حفظ التقدم ومغادرة'),
+              child:  Text(Get.context!.translate('saveAndLeave')),
             ),
             Row(
               children: [
                 TextButton(
                   onPressed: () => Get.back(),
-                  child: const Text('تابع القراءة'),
+                  child:  Text(Get.context!.translate('continueReading')),
                 ),
                 TextButton(
                   onPressed: () => Get.back(result: true),
-                  child: const Text('مغادرة'),
+                  child:  Text(Get.context!.translate('left')),
                 ),
               ],
             )
@@ -151,24 +143,24 @@ Future<bool?> showAzkarNotDoneDialog() async {
 Future<void> showLocationDisabledDialog() async {
   await Get.dialog(
     AlertDialog(
-      title: const Text('تم تعطيل خدمات الموقع'),
-      content: const SingleChildScrollView(
+      title:  Text( Get.context!.translate('showLocationDisabledDialogTitle')),
+      content: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
-            Text('الرجاء تمكين خدمات الموقع لاستخدام القبلة.'),
+            Text(Get.context!.translate('showLocationDisabledDialogDescription')),
           ],
         ),
       ),
       actionsPadding: const EdgeInsets.all(5),
       actions: <Widget>[
         TextButton(
-          child: const Text('الذهاب إلى الإعدادات'),
+          child: Text(Get.context!.translate('openLocationSettings')),
           onPressed: () async {
             await Geolocator.openLocationSettings();
           },
         ),
         TextButton(
-          child: const Text('إلغاء'),
+          child: Text(Get.context!.translate('cancel')),
           onPressed: () {
             Get.back(); // Close the dialog
           },
@@ -182,14 +174,14 @@ Future<void> showLocationDisabledDialog() async {
 Future<void> showNoInternetDialog() async {
   await Get.dialog(
     AlertDialog(
-      title: const Text('لا يوجد اتصال بالإنترنت'),
-      content: const Text('حدث خطأ ما. يرجى المحاولة لاحقاََ'),
+      title: Text(Get.context!.translate('showNoInternetDialogTitle')),
+      content: Text(Get.context!.translate('showNoInternetDialogDescription')),
       actions: [
         TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text('موافق'),
+          child: Text(Get.context!.translate('ok')),
         ),
       ],
     ),
@@ -199,17 +191,16 @@ Future<void> showNoInternetDialog() async {
 Future<bool> showAskUserForDownloadTimingData() async {
   return await Get.dialog(
     AlertDialog(
-      title: const Text('تنبيه'),
-      content: const Text(
-          'يجب تنزيل ملفات التوقيت أولاً لتميز كلمة بكلمة. هل تريد التحميل الآن؟'),
+      title: Text(Get.context!.translate('alertTitle')),
+      content: Text(Get.context!.translate('showAskUserForDownloadTimingDataDescription')),
       actions: [
         TextButton(
           onPressed: () => Get.back(result: true),
-          child: const Text('تنزيل'),
+          child: Text(Get.context!.translate('download')),
         ),
         TextButton(
           onPressed: () => Get.back(result: false),
-          child: const Text('إلغاء'),
+          child: Text(Get.context!.translate('cancel')),
         ),
       ],
     ),
@@ -222,13 +213,12 @@ Future<void> showDownloadFailedDialog() async {
     context: Get.overlayContext!,
     builder: (context) {
       return AlertDialog(
-        title: const Text('فشل التنزيل'),
-        content:
-            const Text('فشل في تنزيل الملف. يرجى المحاولة مرة أخرى لاحقًا.'),
+        title: Text(Get.context!.translate('showDownloadFailedDialogTitle')),
+        content: Text(Get.context!.translate('showDownloadFailedDialogDescription')),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('موافق'),
+            child: Text(Get.context!.translate('ok')),
           ),
         ],
       );
@@ -250,7 +240,7 @@ Future<dynamic> showAzkarCompletedDialog() {
               JsonPaths.checkIcon,
             ),
           ),
-          const Text('لقد اتممت قراءة الاذكار')
+          Text(Get.context!.translate('showAzkarCompletedDialogTitle')),
         ],
       ),
       actions: [
@@ -258,12 +248,12 @@ Future<dynamic> showAzkarCompletedDialog() {
             onPressed: () {
               Get.close(2);
             },
-            child: const Text('غادر')),
+            child: Text(Get.context!.translate('left'))),
         TextButton(
           onPressed: () {
             Get.back(result: true);
           },
-          child: const Text('إعادة'),
+          child: Text(Get.context!.translate('re')),
         ),
       ],
     ),
@@ -273,26 +263,26 @@ Future<dynamic> showAzkarCompletedDialog() {
 Future<bool> showResetTasbihCountersDialog() async {
   return await Get.dialog(
     AlertDialog(
-      title: const Text(
-        'إعادة ضبط',
-      ),
-      content: const Text(
-        'هل أنت متأكد أنك تريد تصفير العدادات؟',
+      title: Text(Get.context!.translate('showResetTasbihCountersDialogTitle')),
+      content: Text(
+        Get.context!.translate('showResetTasbihCountersDialogDescription'),
       ),
       actions: [
         TextButton(
           onPressed: () {
             Get.back(result: false);
           },
-          child: const Text(
-            'إلغاء',
+          child: Text(
+            Get.context!.translate('cancel'),
           ),
         ),
         TextButton(
           onPressed: () {
             Get.back(result: true);
           },
-          child: const Text('تصفير'),
+          child: Text(
+            Get.context!.translate('reset'),
+          ),
         ),
       ],
     ),
@@ -302,21 +292,23 @@ Future<bool> showResetTasbihCountersDialog() async {
 Future<bool> showDeleteItemDialog() async {
   return await Get.dialog(
     AlertDialog(
-      title: const Text('تأكيد الحذف'),
-      content: const Text('هل أنت متأكد أنك تريد حذف هذا العنصر؟'),
+      title: Text(Get.context!.translate('showDeleteItemDialogTitle')),
+      content: Text(Get.context!.translate('showDeleteItemDialogDescription')),
       actions: [
         TextButton(
           onPressed: () {
             Get.back(result: false); // Close the dialog
           },
-          child: const Text('إلغاء'),
+          child: Text(
+            Get.context!.translate('cancel'),
+          ),
         ),
         TextButton(
           onPressed: () {
             Get.back(result: true); // Close the dialog
           },
-          child: const Text(
-            'حذف',
+          child: Text(
+            Get.context!.translate('delete'),
           ),
         ),
       ],
@@ -328,20 +320,20 @@ Future<bool> showDeleteItemDialog() async {
 Future<bool?> showZkrProgressFoundForContinue() async {
   return await Get.dialog<bool>(
     AlertDialog(
-      title: const Text('تنبيه'),
-      content: const Text('هناك تقدم سابق\n هل تريد المتابعة من حيث توقفت؟'),
+      title: Text(Get.context!.translate('alertTitle')),
+      content: Text(Get.context!.translate('showZkrProgressFoundForContinueDescription')),
       actions: [
         TextButton(
           onPressed: () {
             Get.back(result: true);
           },
-          child: const Text('متابعة'),
+          child: Text(Get.context!.translate('continuee')),
         ),
         TextButton(
           onPressed: () {
             Get.back(result: false);
           },
-          child: const Text('بدء من جديد'),
+          child: Text(Get.context!.translate('startAgain')),
         ),
       ],
     ),

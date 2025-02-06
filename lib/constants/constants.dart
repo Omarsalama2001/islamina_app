@@ -13,87 +13,80 @@ const String previewColorMarkerText = 'ﭑ ﭒ ﭓ ﭔ ﭕ ﭖ ﭗ';
 const String previewColorBox = 'ò';
 const String previewVerse = "ﯜ ﯝ ﯞ ﯟ ﯠ";
 const String previewText = basmala;
-const String explainAdaptiveModeText =
-    'تسمح للمستخدمين بالتحكم الكامل في حجم الخط والتكبير والتصغير وفقًا لاحتياجاتهم الشخصية. يمكن ضبط النص بحجم مناسب للعينين، مما يجعل القراءة مريحة اكثر';
+const String explainAdaptiveModeText = "Dynamic_display_sub";
 
 final List<Map<String, dynamic>> madhabList = [
   {
-    "title": "المذهب الشافعي",
-    "description":
-        "يتم حساب صلاة العصر في المذهب الشافعي عندما يكون ظل الجسم مساويًا لطوله، بالإضافة إلى طول الظل في منتصف النهار.",
+    "title": "shafiTitle",
+    "description": "shafiDescription",
     "madhab": Madhab.shafi.index,
   },
   {
-    "title": "المذهب الحنفي",
-    "description":
-        "يتم حساب صلاة العصر في المذهب الحنفي عندما يكون ظل الجسم ضعف طوله، بالإضافة إلى طول الظل في منتصف النهار.",
+    "title": "hanafiTitle",
+    "description": "hanafiDescription" ,
     "madhab": Madhab.hanafi.index,
   },
 ];
 
 final List<Map<String, dynamic>> calculationMethodList = [
   {
-    "title": "منظمة العالم الإسلامي",
-    "description": "تستخدم زاوية الفجر 18 وزاوية العشاء 17",
+    "title": "calculationMuslimWorldLeagueTitle",
+    "description": "calculationMuslimWorldLeagueDescription",
     "method": CalculationMethod.muslim_world_league.index,
   },
   {
-    "title": "الهيئة العامة المصرية للمساحة",
-    "description": "تستخدم زاوية الفجر 19.5 وزاوية العشاء 17.5",
+    "title": "calculationEgyptianTitle",
+    "description": "calculationEgyptianDescription",
     "method": CalculationMethod.egyptian.index,
   },
   {
-    "title": "جامعة العلوم الإسلامية، كراتشي",
-    "description": "تستخدم زاوية الفجر 18 وزاوية العشاء 18",
+    "title": "calculationKarachiTitle",
+    "description":  "calculationKarachiDescription",
     "method": CalculationMethod.karachi.index,
   },
   {
-    "title": "جامعة أم القرى، مكة",
-    "description":
-        "تستخدم زاوية الفجر 18.5 وزاوية العشاء 90. ملاحظة: يجب إضافة تعديل مخصص لعشاء بزمن +30 دقيقة خلال رمضان",
+    "title": "calculationUmmAlQuraTitle",
+    "description":  "calculationUmmAlQuraDescription",
     "method": CalculationMethod.umm_al_qura.index,
   },
   {
-    "title": "منطقة الخليج",
-    "description": "تستخدم زاوية الفجر والعشاء بزاوية 18.2 درجة",
+    "title": "calculationDubaiTitle",
+    "description": "calculationDubaiDescription",
     "method": CalculationMethod.dubai.index,
   },
   {
-    "title": "لجنة رؤية الهلال",
-    "description":
-        "تستخدم زاوية الفجر 18 وزاوية العشاء 18. كما تستخدم قيم تعديل موسمية",
+    "title": "calculationMoonSightingCommitteeTitle",
+    "description":  "calculationMoonSightingCommitteeDescription",
     "method": CalculationMethod.moon_sighting_committee.index,
   },
   {
-    "title": "الطريقة المعروفة باسم ISNA",
-    "description":
-        "تم تضمين هذه الطريقة لأغراض الاكتمال، ولكنها غير مستحسنة. تستخدم زاوية الفجر 15 وزاوية العشاء 15",
+    "title": "calculationNorthAmericaTitle",
+    "description": "calculationNorthAmericaDescription",
     "method": CalculationMethod.north_america.index,
   },
   {
-    "title": "الكويت",
-    "description": "تستخدم زاوية الفجر 18 وزاوية العشاء 17.5",
+    "title": "calculationKuwaitTitle",
+    "description":"calculationKuwaitDescription",
     "method": CalculationMethod.kuwait.index,
   },
   {
-    "title": "قطر",
-    "description": "نسخة معدلة من أم القرى تستخدم زاوية الفجر 18",
+    "title": "calculationQatarTitle",
+    "description":  "calculationQatarDescription",
     "method": CalculationMethod.qatar.index,
   },
   {
-    "title": "سنغافورة",
-    "description": "تستخدم زاوية الفجر 20 وزاوية العشاء 18",
+    "title": "calculationSingaporeTitle",
+    "description": "calculationSingaporeDescription",
     "method": CalculationMethod.singapore.index,
   },
   {
-    "title": "تركيا",
-    "description": "تستخدم زاوية الفجر 18 وزاوية العشاء 17",
+    "title": "calculationTurkeyTitle",
+    "description": "calculationTurkeyDescription",
     "method": CalculationMethod.turkey.index,
   },
   {
-    "title": "معهد الجيوفيزياء، جامعة طهران",
-    "description":
-        "وقت العشاء المبكر بزاوية 14 درجة. وقت الفجر متأخر قليلاً بزاوية 17.7 درجة. يحسب المغرب بناءً على وصول الشمس إلى زاوية 4.5 درجة تحت الأفق",
+    "title": "calculationTehranTitle",
+    "description":"calculationTehranDescription",
     "method": CalculationMethod.tehran.index,
   },
 ];

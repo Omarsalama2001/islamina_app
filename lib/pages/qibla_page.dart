@@ -7,7 +7,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
+import 'package:islamina_app/main.dart';
 import 'package:islamina_app/pages/qibla_camera.dart';
+import 'package:lottie/lottie.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:sensors_plus/sensors_plus.dart';
+import 'package:smooth_compass/utils/src/compass_ui.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/custom_progress_indicator.dart';
 import '../controllers/qibla_page_controller.dart';
@@ -21,7 +28,7 @@ class QiblaPage extends GetView<QiblaController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('القبلة'), // App bar title
+        title:  Text(context.translate('qibla')), // App bar title
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
         actions: const [
           IconButton(
@@ -63,27 +70,17 @@ class QiblaPage extends GetView<QiblaController> {
                   controller.tabController.index = value;
                   controller.update();
                 },
-                tabs: const [
+                tabs:  [
                   Tab(
-                    text: 'البوصلة',
+                    text: context.translate('qiblaCompass'),
                   ),
                   Tab(
-                    text: 'الواقع المعزز',
+                    text:context.translate('qiblaVr'),
                   ),
                 ],
               ),
             ),
           ),
-          // Expanded(
-          //   child: TabBarView(
-          //     controller: controller.tabController,
-          //     children: [
-          //       const _QiblaCompress(),
-          //       // QiblaCamera(cameras: Get.arguments),
-          //       Container(color: Colors.red),
-          //     ],
-          //   ),
-          // ),
           Expanded(
             child: GetBuilder<QiblaController>(
               init: QiblaController(),
@@ -91,8 +88,7 @@ class QiblaPage extends GetView<QiblaController> {
                 return IndexedStack(
                   index: controller.tabController.index,
                   children: [
-                    // const _QiblaCompress(),
-                    const QiblaView(),
+                    const QiblaWidget(),
                     QiblaCamera(cameras: controller.cameras),
                   ],
                 );
@@ -103,278 +99,258 @@ class QiblaPage extends GetView<QiblaController> {
       ),
     );
   }
-
-  // Widget for requesting location permissions
 }
 
-class QiblaView extends StatelessWidget {
-  const QiblaView({super.key});
+class QiblaWidget extends StatefulWidget {
+  const QiblaWidget({super.key});
+
+  @override
+  State<QiblaWidget> createState() => _QiblaWidgetState();
+}
+
+class _QiblaWidgetState extends State<QiblaWidget> {
+  double? _x, _y, _z;
+  bool _isDeviceHorizontal = false;
+  final double _threshold = 3.5; // عتبة للتسارع (يمكن تعديلها)
+
+  @override
+  void initState() {
+    super.initState();
+    accelerometerEvents.listen((AccelerometerEvent event) {
+      setState(() {
+        _x = event.x;
+        _y = event.y;
+        _z = event.z;
+
+        setState(() {
+          _isDeviceHorizontal = _x!.abs() < _threshold && _y!.abs() < _threshold;
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<QiblaController>(
-      init: QiblaController(),
-      builder: (controller) {
-        return controller.hasPermission
-            ? StreamBuilder(
-                stream: FlutterQiblah.qiblahStream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(
-                        color: Colors.grey,
-                      ),
-                    );
-                  }
-
-                  final qiblahDirection = snapshot.data;
-                  controller.animations = Tween(
-                    begin: controller.begin,
-                    end: (qiblahDirection!.qiblah * (pi / 180) * -1),
-                  ).animate(controller.animationsController!);
-                  controller.begin = (qiblahDirection.qiblah * (pi / 180) * -1);
-                  controller.animationsController!.forward(from: 0);
-
-                  return Center(
-                    child: SizedBox(
-                      child: AnimatedBuilder(
-                        animation: controller.animations!,
-                        builder: (context, child) => Transform.rotate(
-                          angle: controller.animations!.value,
-                          // child: Image.asset(
-                          //   'images/qibla_image.png',
-                          // ),
-                          child: SvgPicture.asset(
-                            'assets/svg/qibla.svg',
-                            // ignore: deprecated_member_use
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Center(
-                  //   child: MessageWithButtonWidget(
-                  //     title:
-                  //         'الرجاء السماح بصلاحيات الموقع مرة واحدة على الاقل',
-                  //     buttonText: 'إعطاء صلاحية',
-                  //     onTap: () async {
-                  //       await controller.getPermission();
-                  //       controller.update();
-                  //     },
-                  //   ),
-                  // ),
-                  Center(
-                    child: MessageWithButtonWidget(
-                      title:
-                          'الرجاء السماح بصلاحيات الموقع للحصول على اتجاه القبلة',
-                      buttonText: 'إعطاء صلاحية',
-                      onTap: controller.checkLocationStatus,
-                    ),
-                  ),
-                ],
-              );
-      },
-    );
-  }
-}
-
-class _QiblaCompress extends GetView<QiblaController> {
-  const _QiblaCompress();
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: controller.stream,
-      builder: (context, AsyncSnapshot<LocationStatus> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CustomCircularProgressIndicator();
-        }
-
-        if (snapshot.data?.enabled == true) {
-          switch (snapshot.data?.status) {
-            case LocationPermission.always:
-            case LocationPermission.whileInUse:
-              var qiblahTurns = 0.0;
-              var preValue = 0.0;
-              var direction = 0.0;
-
-              return StreamBuilder<QiblahDirection>(
-                stream: FlutterQiblah.qiblahStream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CustomCircularProgressIndicator();
-                  } else if (!snapshot.hasData || snapshot.hasError) {
-                    return const Center(
-                      child: LoadingErrorText(),
-                    );
-                  } else {
-                    // Adjust direction value
-                    direction = direction < 0
-                        ? (360 + direction)
-                        : snapshot.data?.qiblah ?? 0;
-
-                    // Calculate difference and adjust if needed
-                    double diff = direction - preValue;
-                    if (diff.abs() > 180) {
-                      if (preValue > direction) {
-                        diff = 360 - (direction - preValue).abs();
-                      } else {
-                        diff = (360 - (preValue - direction).abs()).toDouble();
-                        diff = diff * -1;
-                      }
+        init: QiblaController(),
+        builder: (controller) {
+          return controller.hasPermission
+              ? StreamBuilder(
+                  stream: FlutterQiblah.qiblahStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(),
+                      );
                     }
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    }
+                    if (snapshot.hasData) {
+                      final qiblahDirection = snapshot.data;
+                      var diffAngle = (qiblahDirection!.direction - qiblahDirection.offset);
 
-                    // Calculate turns
-                    final kabba = ((snapshot.data?.offset ?? 0) -
-                            (snapshot.data?.direction ?? 0))
-                        .toInt();
-                    qiblahTurns += (diff / 360);
-                    preValue = snapshot.data?.qiblah ?? 0;
-
-                    // Build UI
-                    return OrientationBuilder(builder: (context, orientation) {
-                      if (orientation == Orientation.portrait) {
-                        return Center(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Column(
-                                  children: [
-                                    Text('الكعبة',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge),
-                                    Text(
-                                      '$kabba°',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium,
-                                    ),
-                                  ],
-                                ),
-                                Transform.flip(
-                                  flipX: true,
-                                  child: AnimatedRotation(
-                                    duration: const Duration(milliseconds: 400),
-                                    turns: qiblahTurns,
-                                    child: SvgPicture.asset(
-                                      'assets/svg/qibla.svg',
-                                      // ignore: deprecated_member_use
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                      return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        Padding(
+                          padding:  EdgeInsets.symmetric(horizontal: 15.sp),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                flex: 2,
+                                child: Card.outlined(
+                                  color: Colors.white,
+                                  elevation: 5,
+                                  child: Padding(
+                                    padding:  EdgeInsets.all(15.0.sp),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        Image.asset(
-                                          'assets/images/kaaba.png',
-                                          width: 40,
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [Text("${controller.distanceToKaaba.toInt()} ${ context.translate('km')}"), Gap(5), Image.asset('assets/images/ka3ba_activited.png', height: 5.h, width: 5.w)],
                                         ),
-                                        const Gap(5),
                                         Text(
-                                          '${controller.distanceToKaaba.toStringAsFixed(1)} كم',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headlineMedium,
+                                          context.translate('distance_from_kaaba'),
+                                          style: GoogleFonts.readexPro(),
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Transform.flip(
-                              flipX: true,
-                              child: AnimatedRotation(
-                                duration: const Duration(milliseconds: 400),
-                                turns: qiblahTurns,
-                                child: SvgPicture.asset(
-                                  'assets/svg/qibla.svg',
-                                  // ignore: deprecated_member_use
-                                  color: Theme.of(context).primaryColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  children: [
-                                    Text('الكعبة',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge),
-                                    Text(
-                                      '$kabba°',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium,
+                              Flexible(
+                                flex: 2,
+                                child: Card.outlined(
+                                  color: Colors.white,
+                                  elevation: 5,
+                                  child: Padding(
+                                    padding:  EdgeInsets.all(15.0.sp),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [Text('${qiblahDirection.offset.toInt()}'), Gap(5), Image.asset('assets/images/direction.png', height: 5.h, width: 5.w)],
+                                        ),
+                                        Text(
+                                         context.translate('qibladirectionfrom'),
+                                          style: GoogleFonts.readexPro(),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/kaaba.png',
-                                      width: 40,
-                                    ),
-                                    const Gap(5),
-                                    Text(
-                                      '${controller.distanceToKaaba.toStringAsFixed(1)} كم',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium,
-                                    ),
-                                  ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Image.asset((diffAngle.toInt() <= 10 && diffAngle.toInt() >= -10) ? 'assets/images/ka3ba_activited.png' : 'assets/images/ka3ba_not_activited.png', height: 8.h, width: 15.w),
+                        SizedBox(
+                          height: 250,
+                          width: 250,
+                          child: Stack(
+                            alignment: Alignment.topCenter,
+                            children: [
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                child: Transform.rotate(
+                                  angle: (qiblahDirection.direction * (pi / 180) * -1),
+                                  child: Image.asset(
+                                    'assets/images/compass_new.png',
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
-                              ],
+                              ),
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 3,
+                                child: Transform.rotate(
+                                    angle: (qiblahDirection.qiblah * (pi / 180) * -1),
+                                    child: Image.asset(
+                                      'assets/images/needle_2.png',
+                                      height: 20.h,
+                                      width: 20.w,
+                                    )),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Gap(4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                           context.translate(   qiblaStatusMessage(
+                                _isDeviceHorizontal,
+                                (qiblahDirection.direction - qiblahDirection.offset),
+                              )['text']),
+                              style: GoogleFonts.readexPro().copyWith(fontSize: 15.sp),
                             ),
+                            const Gap(10),
+                            Image.asset(qiblaStatusMessage(_isDeviceHorizontal, diffAngle)['icon'], height: 8.h, width: 8.w),
                           ],
-                        );
-                      }
-                    });
-                  }
-                },
-              );
-
-            case LocationPermission.denied:
-            case LocationPermission.deniedForever:
-              // Display widget for denied location permissions
-              return MessageWithButtonWidget(
-                  title:
-                      'الرجاء السماح بصلاحيات الموقع للحصول على اتجاه القبلة',
-                  buttonText: 'إعطاء صلاحية',
-                  onTap: controller.checkLocationStatus);
-
-            default:
-              return const Center(child: LoadingErrorText());
-          }
-        } else {
-          // Display widget when location settings are disabled
-          return MessageWithButtonWidget(
-              title: "تم إيقاف إعدادات الموقع. يرجى تمكينها للمتابعة",
-              buttonText: "تفعيل إعدادات الموقع",
-              onTap: controller.checkLocationStatus);
-        }
-      },
-    );
+                        )
+                      ]);
+                    } else {
+                      return Text("Not supported");
+                    }
+                  })
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: MessageWithButtonWidget(
+                        title: 'الرجاء السماح بصلاحيات الموقع للحصول على اتجاه القبلة',
+                        buttonText: 'إعطاء صلاحية',
+                        onTap: controller.checkLocationStatus,
+                      ),
+                    ),
+                  ],
+                );
+        });
   }
 }
+
+qiblaStatusMessage(bool isDeviceHorizontal, var diffAngle) {
+  if (!isDeviceHorizontal) {
+    return {'text': "Pleaseplacethephonehorizontally", 'icon': 'assets/images/smartphone.png'};
+  } else {
+    if (diffAngle <= 10 && diffAngle >= -10) {
+      return {'text': 'ThedeviceindicatesthedirectionoftheQibla', 'icon': 'assets/images/ka3ba_activited.png'};
+    } else {
+      if (diffAngle < 0) {
+        return {'text': '${Get.context!.translate('move_phone')} ${diffAngle.abs().toInt()} ${Get.context!.translate('degrees_to_right')}', 'icon': 'assets/images/rotate_phone.png'};
+      } else {
+        return {'text': '${Get.context!.translate('move_phone')} ${diffAngle.abs().toInt()} ${Get.context!.translate('degrees_to_left')}', 'icon': 'assets/images/rotate_phone.png'};
+      }
+    }
+  }
+}
+
+
+// class QiblaTest extends StatelessWidget {
+//   const QiblaTest({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GetBuilder<QiblaController>(
+//         init: QiblaController(),
+//         builder: (controller) {
+//           return controller.hasPermission ?
+//           Center(
+//             child: SmoothCompass(
+//               isQiblahCompass: true,
+//               compassBuilder: (context, compassData, compassAsset) {
+//                 return AnimatedRotation(
+//                   turns: (compassData?.data?.turns ?? 0),
+//                   duration: Duration(milliseconds: 400),
+//                   child: SizedBox(
+//                     height: 200,
+//                     width: 200,
+//                     child: Stack(children: [
+//                       Positioned(
+//                           top: 0,
+//                           left: 0,
+//                           right: 0,
+//                           child: Image.asset(
+//                             'assets/images/compass_new.png',
+//                             fit: BoxFit.fill,
+//                           )),
+//                       Positioned(
+//                           top: 0,
+//                           left: 0,
+//                           right: 0,
+//                           bottom: 20,
+//                           child: AnimatedRotation(
+//                               turns: (compassData?.data?.qiblahOffset) ?? 0 / 360,
+//                               duration: Duration(milliseconds: 400),
+//                               child: SvgPicture.asset(
+//                                 'assets/images/needle.svg',
+//                                 fit: BoxFit.fitHeight,
+//                               )))
+//                     ]),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ) : Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Center(
+//                       child: MessageWithButtonWidget(
+//                         title: 'الرجاء السماح بصلاحيات الموقع للحصول على اتجاه القبلة',
+//                         buttonText: 'إعطاء صلاحية',
+//                         onTap: controller.checkLocationStatus,
+//                       ),
+//                     ),
+//                   ],
+//                 );
+//         });
+//   }
+// }

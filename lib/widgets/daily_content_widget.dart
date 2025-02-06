@@ -2,6 +2,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:islamina_app/core/extensions/translation_extension.dart';
 import 'package:islamina_app/widgets/custom_pop_menu_item.dart';
 
 import '../utils/utils.dart';
@@ -34,7 +35,7 @@ class DailyContentContainer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                context.translate(title),
                 style: theme.textTheme.titleSmall!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -47,11 +48,11 @@ class DailyContentContainer extends StatelessWidget {
                     CustomPopupMenuItem.build(
                         index: 'copy',
                         iconData: FluentIcons.copy_16_regular,
-                        text: 'نسخ'),
+                        text: 'copy'),
                     CustomPopupMenuItem.build(
                         index: 'share',
                         iconData: FluentIcons.share_16_regular,
-                        text: 'مشاركة')
+                        text: 'share')
                   ];
                 },
                 onSelected: (value) {
